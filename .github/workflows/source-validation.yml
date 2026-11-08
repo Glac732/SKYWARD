@@ -1,0 +1,47 @@
+name: Source validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Unity project metadata and assembly definitions
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('.')
+          manifest = json.loads((root / 'Packages/manifest.json').read_text())
+          assert 'com.unity.test-framework' in manifest['dependencies']
+          assert (root / 'ProjectSettings/ProjectVersion.txt').read_text().strip() == 'm_EditorVersion: 6000.3.0f1'
+          for path in root.rglob('*.asmdef'):
+              json.loads(path.read_text())
+          for required in [
+              'Assets/SKYWARD/Scripts/Aircraft/AircraftController.cs',
+              'Assets/SKYWARD/Scripts/Aircraft/AerodynamicModel.cs',
+              'Assets/SKYWARD/Scripts/Environment/DemoAirportBuilder.cs',
+              'Assets/SKYWARD/Scripts/UI/FlightHud.cs',
+              'Assets/SKYWARD/Tests/EditMode/AerodynamicModelTests.cs'
+          ]:
+              assert (root / required).is_file(), f'Missing {required}'
+          print('Unity metadata, asmdef JSON and required flight source files validated.')
+          PY
+      - name: Check C# delimiter balance
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          files = list(Path('Assets').rglob('*.cs'))
+          assert files, 'No C# files found'
+          for path in files:
+              source = path.read_text()
+              assert source.count('{') == source.count('}'), f'Unbalanced braces: {path}'
+              assert source.count('(') == source.count(')'), f'Unbalanced parentheses: {path}'
+              assert source.count('[') == source.count(']'), f'Unbalanced brackets: {path}'
+          print(f'Checked delimiters in {len(files)} C# files.')
+          PY
