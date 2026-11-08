@@ -65,6 +65,28 @@ namespace Skyward.Tests
         }
 
         [Test]
+        public void ElevatorInputCommandsNoseUpMoment()
+        {
+            AeroResult result = Evaluate(Vector3.forward * 35f, controls: new Vector3(1f, 0f, 0f));
+            Assert.Less(result.momentLocal.x, 0f);
+        }
+
+        [Test]
+        public void PositiveSideslipProducesWeathercockYawMoment()
+        {
+            AeroResult result = Evaluate(new Vector3(5f, 0f, 35f));
+            Assert.Greater(result.momentLocal.y, 0f);
+        }
+
+        [Test]
+        public void PostStallLiftCoefficientFalls()
+        {
+            float belowStall = Evaluate(new Vector3(0f, -5f, 30f)).liftCoefficient;
+            float beyondStall = Evaluate(new Vector3(0f, -18f, 30f)).liftCoefficient;
+            Assert.Greater(belowStall, beyondStall);
+        }
+
+        [Test]
         public void RollInputProducesRollMoment()
         {
             AeroResult neutral = Evaluate(Vector3.forward * 35f);
