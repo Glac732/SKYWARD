@@ -54,6 +54,8 @@ jobs:
           all_cs = '\n'.join(p.read_text() for p in (root / 'Assets').rglob('*.cs'))
           assert 'Arial.ttf' not in all_cs, 'Use the supported LegacyRuntime.ttf built-in font'
           assert 'LegacyRuntime.ttf' in all_cs
+          session = (root / 'Assets/SKYWARD/Scripts/Core/SkywardSession.cs').read_text()
+          assert 'unsavedSeconds' in session and 'flightSecondsAlreadyRecorded' in session, 'Pause/quit saves must not double-count session flight time'
           print('Project metadata, package versions, uGUI reference, URP setup, build-scene registration and required source files validated.')
           PY
       - name: Check C# delimiter balance
