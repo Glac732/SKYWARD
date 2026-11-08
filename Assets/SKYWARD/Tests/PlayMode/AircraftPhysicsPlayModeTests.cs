@@ -61,6 +61,33 @@ namespace Skyward.Tests
             Assert.IsFalse(controller.IsGrounded);
         }
 
+
+        [UnityTest]
+        public IEnumerator TrainerAcceleratesAndBecomesAirborne()
+        {
+            controller.SetParkingBrake(false);
+            controller.SetThrottle(1f);
+            controller.SetFlaps(0.2f);
+            controller.SetControls(new Vector3(0.65f, 0f, 0f));
+            for (int i = 0; i < 1000 && !controller.HasTakenOff; i++)
+                yield return new WaitForFixedUpdate();
+            Assert.IsTrue(controller.HasTakenOff, $"Trainer did not leave the runway. Speed: {controller.Body.velocity.magnitude:0.0} m/s; altitude: {controller.AltitudeMeters:0.0} m.");
+            Assert.Greater(controller.Body.velocity.magnitude, 20f);
+        }
+
+        [UnityTest]
+        public IEnumerator GearDownApproachRecordsRunwayTouchdown()
+        {
+            controller.transform.position = new Vector3(0f, 3.5f, 0f);
+            controller.Body.velocity = new Vector3(0f, -3f, 15f);
+            controller.SetThrottle(0f);
+            controller.SetControls(Vector3.zero);
+            for (int i = 0; i < 300 && !controller.HasLanded; i++)
+                yield return new WaitForFixedUpdate();
+            Assert.IsTrue(controller.HasLanded, "Wheel suspension should record touchdown after descending onto the runway.");
+            Assert.IsTrue(controller.TouchdownOnRunway, "Touchdown must be attributed to the actual runway collider.");
+        }
+
         [UnityTest]
         public IEnumerator TelemetryReadsAircraftRigidBodyVelocity()
         {
