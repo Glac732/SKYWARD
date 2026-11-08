@@ -33,7 +33,23 @@ namespace Skyward.Editor
             directional.intensity = 1.15f;
             light.transform.rotation = Quaternion.Euler(45f, -30f, 0f);
 
-            EditorSceneManager.SaveScene(scene, "Assets/Scenes/SKYWARD_Demo.unity");
+            const string scenePath = "Assets/Scenes/SKYWARD_Demo.unity";
+            EditorSceneManager.SaveScene(scene, scenePath);
+
+            // Ensure the generated demo scene is included when a standalone player is built.
+            var buildScenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            bool alreadyIncluded = false;
+            for (int i = 0; i < buildScenes.Count; i++)
+            {
+                if (buildScenes[i].path != scenePath) continue;
+                buildScenes[i] = new EditorBuildSettingsScene(scenePath, true);
+                alreadyIncluded = true;
+                break;
+            }
+            if (!alreadyIncluded)
+                buildScenes.Add(new EditorBuildSettingsScene(scenePath, true));
+            EditorBuildSettings.scenes = buildScenes.ToArray();
+
             AssetDatabase.SaveAssets();
             Debug.Log("SKYWARD demo scene created. Open Assets/Scenes/SKYWARD_Demo.unity and press Play.");
         }
