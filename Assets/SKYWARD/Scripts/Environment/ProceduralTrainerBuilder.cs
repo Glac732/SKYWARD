@@ -9,7 +9,7 @@ namespace Skyward.Environment
         public static GameObject Build()
         {
             GameObject aircraft = new GameObject("SKYWARD Trainer Aircraft");
-            CreatePart("Fuselage", PrimitiveType.Capsule, new Vector3(0f, 0f, 0f), new Vector3(0.55f, 0.62f, 4.5f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform, new Vector3(0f, 0f, 90f));
+            CreatePart("Fuselage", PrimitiveType.Capsule, new Vector3(0f, 0f, 0f), new Vector3(0.55f, 0.62f, 4.5f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform, new Vector3(90f, 0f, 0f));
             CreatePart("Left wing", PrimitiveType.Cube, new Vector3(-0.05f, 0f, 0f), new Vector3(10.9f, 0.12f, 1.45f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Tailplane", PrimitiveType.Cube, new Vector3(0f, 0.18f, -3.75f), new Vector3(3.6f, 0.1f, 0.8f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Fin", PrimitiveType.Cube, new Vector3(0f, 0.8f, -3.65f), new Vector3(0.12f, 1.3f, 0.9f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
