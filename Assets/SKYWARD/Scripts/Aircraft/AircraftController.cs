@@ -54,11 +54,11 @@ namespace Skyward.Aircraft
         public float FlightSeconds => flightSeconds;
         public AeroResult LastAero => lastAero;
         public float AirspeedKnots => lastAero.indicatedAirspeed * 1.943844f;
-        public float GroundSpeedKnots => body != null ? body.velocity.magnitude * 1.943844f : 0f;
+        public float GroundSpeedKnots => body != null ? Vector3.ProjectOnPlane(body.velocity, Vector3.up).magnitude * 1.943844f : 0f;
         public float AltitudeMeters => Mathf.Max(0f, transform.position.y + 0.42f);
         public float VerticalSpeedMps => body != null ? body.velocity.y : 0f;
-        public float HeadingDegrees => transform.eulerAngles.y;
-        public float BankDegrees => Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
+        public float HeadingDegrees => Mathf.Repeat(Mathf.Atan2(transform.forward.x, transform.forward.z) * Mathf.Rad2Deg, 360f);
+        public float BankDegrees => Mathf.Atan2(-transform.right.y, transform.up.y) * Mathf.Rad2Deg;
         public bool IsGrounded { get; private set; }
         public bool HasTakenOff => hasLeftGround;
         public bool HasLanded => hasTouchedDown;
@@ -67,7 +67,7 @@ namespace Skyward.Aircraft
         public float TouchdownVerticalSpeed => touchdownVerticalSpeed;
         public float MaximumAltitude => maximumAltitude;
         public float MaximumAirspeed => maximumAirspeed;
-        public float PitchDegrees => Mathf.DeltaAngle(0f, transform.eulerAngles.x);
+        public float PitchDegrees => Mathf.Asin(Mathf.Clamp(transform.forward.y, -1f, 1f)) * Mathf.Rad2Deg;
         public string FlightPhase => !hasLeftGround ? (IsGrounded ? "GROUND ROLL" : "PREFLIGHT") : (!IsGrounded ? (VerticalSpeedMps > 1f ? "CLIMB / FLIGHT" : VerticalSpeedMps < -1f ? "DESCENT / APPROACH" : "CRUISE") : "LANDED / ROLL-OUT");
 
         private void Awake()
