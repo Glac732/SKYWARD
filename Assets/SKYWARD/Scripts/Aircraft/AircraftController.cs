@@ -285,7 +285,7 @@ namespace Skyward.Aircraft
             if (wheel == null || visual == null) return;
             wheel.GetWorldPose(out Vector3 position, out Quaternion rotation);
             visual.position = position;
-            visual.rotation = rotation * Quaternion.Euler(90f, 0f, 0f);
+            visual.rotation = rotation * Quaternion.Euler(0f, 0f, 90f);
         }
 
         public void SetThrottle(float value) => throttle = Mathf.Clamp01(value);
