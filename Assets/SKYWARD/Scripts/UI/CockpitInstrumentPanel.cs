@@ -52,7 +52,7 @@ namespace Skyward.UI
                 rect.anchoredPosition = new Vector2(-420f + i * 140f, 0f);
                 rect.sizeDelta = new Vector2(132f, 210f);
                 Text text = gauge.GetComponent<Text>();
-                text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
                 text.fontSize = 35;
                 text.fontStyle = FontStyle.Bold;
                 text.alignment = TextAnchor.MiddleCenter;
