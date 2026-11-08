@@ -88,6 +88,14 @@ namespace Skyward.Tests
             Assert.IsTrue(controller.TouchdownOnRunway, "Touchdown must be attributed to the actual runway collider.");
         }
 
+        [Test]
+        public void ControlAxesClampIndependently()
+        {
+            controller.SetControls(new Vector3(2f, -2f, 0.5f));
+            Assert.AreEqual(new Vector3(1f, -1f, 0.5f), controller.ControlInput,
+                "Pitch, roll and yaw must each retain their own full-scale input.");
+        }
+
         [UnityTest]
         public IEnumerator TelemetryReadsAircraftRigidBodyVelocity()
         {
