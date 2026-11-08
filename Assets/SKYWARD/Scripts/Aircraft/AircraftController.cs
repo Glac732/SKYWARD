@@ -39,6 +39,7 @@ namespace Skyward.Aircraft
         private float maximumAirspeed;
         private bool hasLeftGround;
         private bool hasTouchedDown;
+        private bool touchdownOnRunway;
         private float touchdownVerticalSpeed;
 
         public AircraftConfig Config => config;
@@ -60,6 +61,8 @@ namespace Skyward.Aircraft
         public bool IsGrounded { get; private set; }
         public bool HasTakenOff => hasLeftGround;
         public bool HasLanded => hasTouchedDown;
+        public bool TouchdownOnRunway => touchdownOnRunway;
+        public bool IsOnRunway { get; private set; }
         public float TouchdownVerticalSpeed => touchdownVerticalSpeed;
         public float MaximumAltitude => maximumAltitude;
         public float MaximumAirspeed => maximumAirspeed;
@@ -199,6 +202,7 @@ namespace Skyward.Aircraft
             else
             {
                 IsGrounded = false;
+                IsOnRunway = false;
                 ApplyRetractedGearDrag();
             }
 
@@ -209,6 +213,7 @@ namespace Skyward.Aircraft
             if (hasLeftGround && !hasTouchedDown && IsGrounded)
             {
                 hasTouchedDown = true;
+                touchdownOnRunway = IsOnRunway;
                 touchdownVerticalSpeed = body.velocity.y;
             }
             maximumAltitude = Mathf.Max(maximumAltitude, transform.position.y);
@@ -227,10 +232,16 @@ namespace Skyward.Aircraft
 
         private void UpdateWheelPhysics()
         {
-            bool leftGround = leftWheel != null && leftWheel.isGrounded;
-            bool rightGround = rightWheel != null && rightWheel.isGrounded;
-            bool noseGround = noseWheel != null && noseWheel.isGrounded;
+            WheelHit leftHit = new WheelHit();
+            WheelHit rightHit = new WheelHit();
+            WheelHit noseHit = new WheelHit();
+            bool leftGround = leftWheel != null && leftWheel.GetGroundHit(out leftHit);
+            bool rightGround = rightWheel != null && rightWheel.GetGroundHit(out rightHit);
+            bool noseGround = noseWheel != null && noseWheel.GetGroundHit(out noseHit);
             IsGrounded = leftGround || rightGround || noseGround;
+            IsOnRunway = (leftGround && leftHit.collider != null && leftHit.collider.name == "Runway") ||
+                         (rightGround && rightHit.collider != null && rightHit.collider.name == "Runway") ||
+                         (noseGround && noseHit.collider != null && noseHit.collider.name == "Runway");
 
             float brake = (brakes || parkingBrake) ? config.wheelBrakeTorque : 0f;
             if (leftWheel != null) leftWheel.brakeTorque = brake;
