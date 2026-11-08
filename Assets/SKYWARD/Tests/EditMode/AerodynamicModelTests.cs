@@ -36,6 +36,7 @@ namespace Skyward.Tests
             AeroResult result = Evaluate(new Vector3(0f, -4f, 30f));
             Assert.Greater(result.angleOfAttackDeg, 0f);
             Assert.Greater(result.forceWorld.y, 0f);
+            Assert.Greater(result.momentLocal.x, 0f, "Positive angle of attack should create a nose-down restoring moment.");
         }
 
         [Test]
@@ -68,7 +69,7 @@ namespace Skyward.Tests
         {
             AeroResult neutral = Evaluate(Vector3.forward * 35f);
             AeroResult commanded = Evaluate(Vector3.forward * 35f, controls: new Vector3(0f, 1f, 0f));
-            Assert.AreNotEqual(neutral.momentLocal.z, commanded.momentLocal.z);
+            Assert.Less(commanded.momentLocal.z, neutral.momentLocal.z, "Positive roll input should command a right bank (negative local-Z moment).");
         }
     }
 }
