@@ -62,7 +62,8 @@ namespace Skyward.Aircraft
                 ? Vector3.Cross(localVelocity.normalized, Vector3.right).normalized
                 : Vector3.up;
             Vector3 liftLocal = liftDirectionLocal * (q * config.wingAreaM2 * cl);
-            Vector3 sideLocal = Vector3.left * (q * config.wingAreaM2 * cy);
+            // Positive local-X sideslip must generate a restoring force toward local -X.
+            Vector3 sideLocal = Vector3.right * (q * config.wingAreaM2 * cy);
             float propellerThrustFactor = Mathf.Clamp(1f - speed / 115f, 0.28f, 1f);
             Vector3 thrustLocal = Vector3.forward * (config.maxThrustN * Mathf.Clamp01(throttle) * propellerThrustFactor);
             Vector3 forceWorld = rotation * (dragLocal + liftLocal + sideLocal + thrustLocal);
