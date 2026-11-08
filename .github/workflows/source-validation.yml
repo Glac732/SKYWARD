@@ -40,6 +40,13 @@ jobs:
           ]
           for item in required:
               assert (root / item).is_file(), f'Missing {item}'
+          trainer = (root / 'Assets/SKYWARD/Scripts/Environment/ProceduralTrainerBuilder.cs').read_text()
+          assert 'new Vector3(90f, 0f, 0f));' in trainer, 'Fuselage capsule must be oriented along the aircraft longitudinal axis'
+          assert trainer.count('new Vector3(0f, 0f, 90f))') >= 3, 'All three wheel meshes must align to their wheel axles'
+          aero = (root / 'Assets/SKYWARD/Scripts/Aircraft/AerodynamicModel.cs').read_text()
+          assert 'Vector3 sideLocal = Vector3.right' in aero, 'Sideslip force must oppose positive local-X slip'
+          controller = (root / 'Assets/SKYWARD/Scripts/Aircraft/AircraftController.cs').read_text()
+          assert 'Mathf.Clamp(value.x, -1f, 1f)' in controller and 'Mathf.Clamp(value.y, -1f, 1f)' in controller and 'Mathf.Clamp(value.z, -1f, 1f)' in controller
           setup = (root / 'Assets/SKYWARD/Editor/SkywardSceneSetup.cs').read_text()
           assert 'EnsureUniversalRenderPipeline();' in setup
           assert 'GraphicsSettings.defaultRenderPipeline = pipeline;' in setup
