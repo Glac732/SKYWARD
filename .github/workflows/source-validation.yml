@@ -27,7 +27,9 @@ jobs:
               'Assets/SKYWARD/Scripts/Aircraft/AerodynamicModel.cs',
               'Assets/SKYWARD/Scripts/Environment/DemoAirportBuilder.cs',
               'Assets/SKYWARD/Scripts/UI/FlightHud.cs',
-              'Assets/SKYWARD/Tests/EditMode/AerodynamicModelTests.cs'
+              'Assets/SKYWARD/Scripts/UI/CockpitInstrumentPanel.cs',
+              'Assets/SKYWARD/Tests/EditMode/AerodynamicModelTests.cs',
+              'Assets/SKYWARD/Tests/PlayMode/AircraftPhysicsPlayModeTests.cs'
           ]:
               assert (root / required).is_file(), f'Missing {required}'
           print('Unity metadata, asmdef JSON and required flight source files validated.')
