@@ -46,6 +46,7 @@ namespace Skyward.Aircraft
         public AircraftConfig Config => config;
         public Rigidbody Body => body;
         public float Throttle => throttle;
+        public Vector3 ControlInput => controls;
         public float FuelKg => fuelKg;
         public bool GearDown => gearDown;
         public bool EngineRunning => engineRunning;
