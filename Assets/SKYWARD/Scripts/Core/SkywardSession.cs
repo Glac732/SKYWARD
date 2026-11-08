@@ -53,6 +53,9 @@ namespace Skyward.Core
             GameObject hudObject = new GameObject("SKYWARD Flight HUD");
             FlightHud hud = hudObject.AddComponent<FlightHud>();
             hud.SetAircraft(controller);
+
+            CockpitInstrumentPanel cockpit = aircraft.AddComponent<CockpitInstrumentPanel>();
+            cockpit.SetAircraft(controller);
         }
 
         private void Update()
