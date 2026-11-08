@@ -72,6 +72,18 @@ namespace Skyward.Tests
         }
 
         [Test]
+        public void PositiveSideslipProducesRestoringLateralForce()
+        {
+            Vector3 velocity = new Vector3(5f, 0f, 35f);
+            float configuredSlope = config.sideForceSlope;
+            config.sideForceSlope = 0f;
+            float noSideForce = Evaluate(velocity).forceWorld.x;
+            config.sideForceSlope = configuredSlope;
+            float withSideForce = Evaluate(velocity).forceWorld.x;
+            Assert.Less(withSideForce, noSideForce, "Lateral aerodynamic force must oppose local-X sideslip.");
+        }
+
+        [Test]
         public void PositiveSideslipProducesWeathercockYawMoment()
         {
             AeroResult result = Evaluate(new Vector3(5f, 0f, 35f));
