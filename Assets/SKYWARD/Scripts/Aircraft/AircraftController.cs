@@ -24,7 +24,7 @@ namespace Skyward.Aircraft
         private float fuelKg;
         private bool gearDown = true;
         private bool brakes;
-        private bool parkingBrake = false;
+        private bool parkingBrake = true;
         private bool engineRunning = true;
         private float flapSetting;
         private WheelCollider leftWheel;
