@@ -19,6 +19,7 @@ namespace Skyward.Aircraft
 
         private Rigidbody body;
         private Vector3 controls;
+        private bool externalControlOverride;
         private float throttle = 0.12f;
         private float fuelKg;
         private bool gearDown = true;
@@ -160,11 +161,14 @@ namespace Skyward.Aircraft
         {
             if (config == null || Time.timeScale <= 0f) return;
 
-            float pitch = Axis(KeyCode.W, KeyCode.S);
-            float roll = Axis(KeyCode.D, KeyCode.A);
-            float yaw = Axis(KeyCode.E, KeyCode.Q);
-            Vector3 target = new Vector3(pitch, roll, yaw);
-            controls = Vector3.MoveTowards(controls, target, inputSmoothing * Time.deltaTime);
+            if (!externalControlOverride)
+            {
+                float pitch = Axis(KeyCode.W, KeyCode.S);
+                float roll = Axis(KeyCode.D, KeyCode.A);
+                float yaw = Axis(KeyCode.E, KeyCode.Q);
+                Vector3 target = new Vector3(pitch, roll, yaw);
+                controls = Vector3.MoveTowards(controls, target, inputSmoothing * Time.deltaTime);
+            }
 
             if (Input.GetKey(KeyCode.LeftShift)) throttle = Mathf.MoveTowards(throttle, 1f, throttleRate * Time.deltaTime);
             if (Input.GetKey(KeyCode.LeftControl)) throttle = Mathf.MoveTowards(throttle, 0f, throttleRate * Time.deltaTime);
@@ -284,7 +288,12 @@ namespace Skyward.Aircraft
         }
 
         public void SetThrottle(float value) => throttle = Mathf.Clamp01(value);
-        public void SetControls(Vector3 value) => controls = Vector3.ClampMagnitude(value, 1f);
+        public void SetControls(Vector3 value)
+        {
+            controls = Vector3.ClampMagnitude(value, 1f);
+            externalControlOverride = true;
+        }
+        public void UseKeyboardControls() => externalControlOverride = false;
         public void SetEngineRunning(bool value) => engineRunning = value;
         public void SetGearDown(bool value) => gearDown = value;
         public void ToggleGear() => gearDown = !gearDown;
