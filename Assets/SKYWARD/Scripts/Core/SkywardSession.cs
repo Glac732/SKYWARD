@@ -30,6 +30,9 @@ namespace Skyward.Core
             Rigidbody body = aircraft.AddComponent<Rigidbody>();
             body.mass = aircraftConfig != null ? aircraftConfig.massKg : 780f;
             body.centerOfMass = new Vector3(0f, -0.1f, -0.15f);
+            BoxCollider fuselageCollider = aircraft.AddComponent<BoxCollider>();
+            fuselageCollider.size = new Vector3(1.1f, 0.62f, 4.5f);
+            fuselageCollider.center = new Vector3(0f, 0f, 0f);
 
             AircraftConfig config = aircraftConfig;
             if (config == null)
