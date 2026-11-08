@@ -290,7 +290,7 @@ namespace Skyward.Aircraft
         public void SetThrottle(float value) => throttle = Mathf.Clamp01(value);
         public void SetControls(Vector3 value)
         {
-            controls = Vector3.ClampMagnitude(value, 1f);
+            controls = new Vector3(Mathf.Clamp(value.x, -1f, 1f), Mathf.Clamp(value.y, -1f, 1f), Mathf.Clamp(value.z, -1f, 1f));
             externalControlOverride = true;
         }
         public void UseKeyboardControls() => externalControlOverride = false;
