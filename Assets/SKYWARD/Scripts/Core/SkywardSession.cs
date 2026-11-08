@@ -13,6 +13,7 @@ namespace Skyward.Core
         private bool paused;
         private SkywardSaveData profile;
         private AircraftController activeAircraft;
+        private float flightSecondsAlreadyRecorded;
 
         public void SetAircraftConfig(AircraftConfig value) => aircraftConfig = value;
 
@@ -81,7 +82,12 @@ namespace Skyward.Core
         private void SaveProfile()
         {
             if (activeAircraft != null)
-                profile.totalFlightSeconds += Mathf.Max(0f, activeAircraft.FlightSeconds);
+            {
+                float currentFlightSeconds = Mathf.Max(0f, activeAircraft.FlightSeconds);
+                float unsavedSeconds = Mathf.Max(0f, currentFlightSeconds - flightSecondsAlreadyRecorded);
+                profile.totalFlightSeconds += unsavedSeconds;
+                flightSecondsAlreadyRecorded = currentFlightSeconds;
+            }
             SkywardSaveSystem.Save(profile);
         }
 
