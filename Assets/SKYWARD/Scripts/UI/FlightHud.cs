@@ -76,7 +76,8 @@ namespace Skyward.UI
                 $"THROTTLE  {aircraft.Throttle * 100f,3:000}%   FUEL {aircraft.FuelKg:0.0} kg\n" +
                 $"LIFT CL   {aero.liftCoefficient:0.00}   GEAR {(aircraft.GearDown ? "DOWN" : "UP")}\n" +
                 $"FLAPS     {aircraft.FlapSetting * 100f:0}%   BRAKES {(aircraft.ParkingBrake ? "PARK" : aircraft.IsGrounded ? "READY" : "AIR")}\n" +
-                $"ENGINE    {(aircraft.EngineRunning ? "RUNNING" : "OFF")}   STATE {aircraft.FlightPhase}";
+                $"ENGINE    {(aircraft.EngineRunning ? "RUNNING" : "OFF")}   STATE {aircraft.FlightPhase}\n" +
+                $"TOUCHDOWN {(aircraft.HasLanded ? (aircraft.TouchdownOnRunway ? "RUNWAY" : "OFF-RWY") : "--")}  V/S {aircraft.TouchdownVerticalSpeed:0.0} m/s";
         }
     }
 }
