@@ -8,7 +8,7 @@ namespace Skyward.CameraSystem
         [SerializeField] private Vector3 chaseOffset = new Vector3(0f, 3.2f, -10f);
         [SerializeField] private float followSharpness = 5f;
         [SerializeField] private float lookSharpness = 7f;
-        [SerializeField] private Vector3 cockpitOffset = new Vector3(0f, 1.05f, 0.75f);
+        [SerializeField] private Vector3 cockpitOffset = new Vector3(0f, 0.92f, 0.10f);
         private Camera cam;
         private bool cockpit;
         private float yaw;
@@ -43,7 +43,7 @@ namespace Skyward.CameraSystem
             if (cockpit)
             {
                 desiredPosition = target.TransformPoint(cockpitOffset);
-                desiredRotation = target.rotation * Quaternion.Euler(pitch, yaw, 0f);
+                desiredRotation = target.rotation * Quaternion.Euler(-28f + pitch * 0.25f, yaw, 0f);
             }
             else
             {
