@@ -1,21 +1,23 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Skyward.Environment
 {
     public static class ProceduralTrainerBuilder
     {
+        private static readonly Dictionary<Color, Material> MaterialCache = new Dictionary<Color, Material>();
         public static GameObject Build()
         {
             GameObject aircraft = new GameObject("SKYWARD Trainer Aircraft");
-            CreatePart("Fuselage", PrimitiveType.Capsule, new Vector3(0f, 0f, 0f), new Vector3(0.55f, 0.62f, 4.5f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform, new Vector3(90f, 0f, 0f));
+            CreatePart("Fuselage", PrimitiveType.Capsule, new Vector3(0f, 0f, 0f), new Vector3(0.55f, 0.62f, 4.5f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform, new Vector3(0f, 0f, 90f));
             CreatePart("Left wing", PrimitiveType.Cube, new Vector3(-0.05f, 0f, 0f), new Vector3(10.9f, 0.12f, 1.45f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Tailplane", PrimitiveType.Cube, new Vector3(0f, 0.18f, -3.75f), new Vector3(3.6f, 0.1f, 0.8f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Fin", PrimitiveType.Cube, new Vector3(0f, 0.8f, -3.65f), new Vector3(0.12f, 1.3f, 0.9f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Nose", PrimitiveType.Sphere, new Vector3(0f, 0f, 2.15f), new Vector3(0.52f, 0.52f, 0.65f), new Color(0.18f, 0.22f, 0.25f), aircraft.transform);
             CreatePart("Cockpit glazing", PrimitiveType.Sphere, new Vector3(0f, 0.42f, 0.55f), new Vector3(0.48f, 0.55f, 0.95f), new Color(0.12f, 0.25f, 0.32f), aircraft.transform);
-            CreatePart("Left wheel", PrimitiveType.Cylinder, new Vector3(-1.25f, -0.68f, -0.2f), new Vector3(0.64f, 0.16f, 0.64f), Color.black, aircraft.transform, new Vector3(90f, 0f, 0f));
-            CreatePart("Right wheel", PrimitiveType.Cylinder, new Vector3(1.25f, -0.68f, -0.2f), new Vector3(0.64f, 0.16f, 0.64f), Color.black, aircraft.transform, new Vector3(90f, 0f, 0f));
-            CreatePart("Nose wheel", PrimitiveType.Cylinder, new Vector3(0f, -0.68f, 1.65f), new Vector3(0.44f, 0.14f, 0.44f), Color.black, aircraft.transform, new Vector3(90f, 0f, 0f));
+            CreatePart("Left wheel", PrimitiveType.Cylinder, new Vector3(-1.25f, -0.68f, -0.2f), new Vector3(0.64f, 0.16f, 0.64f), Color.black, aircraft.transform, new Vector3(0f, 0f, 90f));
+            CreatePart("Right wheel", PrimitiveType.Cylinder, new Vector3(1.25f, -0.68f, -0.2f), new Vector3(0.64f, 0.16f, 0.64f), Color.black, aircraft.transform, new Vector3(0f, 0f, 90f));
+            CreatePart("Nose wheel", PrimitiveType.Cylinder, new Vector3(0f, -0.68f, 1.65f), new Vector3(0.44f, 0.14f, 0.44f), Color.black, aircraft.transform, new Vector3(0f, 0f, 90f));
             CreatePart("Propeller", PrimitiveType.Cube, new Vector3(0f, 0f, 2.55f), new Vector3(0.08f, 1.6f, 0.12f), new Color(0.12f, 0.12f, 0.12f), aircraft.transform);
             return aircraft;
         }
@@ -33,11 +35,27 @@ namespace Skyward.Environment
             Renderer renderer = go.GetComponent<Renderer>();
             if (renderer != null)
             {
-                Material material = new Material(Shader.Find("Standard"));
-                material.color = color;
-                renderer.sharedMaterial = material;
+                renderer.sharedMaterial = GetSharedMaterial(color);
             }
             return go;
+        }
+
+        private static Material GetSharedMaterial(Color color)
+        {
+            if (MaterialCache.TryGetValue(color, out Material cached) && cached != null)
+                return cached;
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Standard");
+            if (shader == null)
+            {
+                Debug.LogError("SKYWARD: No supported Lit shader is available for aircraft materials.");
+                return null;
+            }
+
+            Material material = new Material(shader) { color = color };
+            MaterialCache[color] = material;
+            return material;
         }
     }
 }
