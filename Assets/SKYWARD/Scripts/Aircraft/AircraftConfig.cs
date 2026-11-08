@@ -32,7 +32,7 @@ namespace Skyward.Aircraft
         public float pitchControlMoment = -0.12f;
         public float pitchDamping = 3.5f;
         public float pitchStability = 0.7f;
-        public float rollControlMoment = 0.035f;
+        public float rollControlMoment = -0.035f;
         public float rollDamping = 0.65f;
         public float yawControlMoment = 0.035f;
         public float yawDamping = 0.9f;
