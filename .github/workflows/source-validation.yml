@@ -11,28 +11,43 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate Unity project metadata and assembly definitions
+      - name: Validate Unity project metadata, packages and assembly definitions
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
           root = Path('.')
           manifest = json.loads((root / 'Packages/manifest.json').read_text())
-          assert 'com.unity.test-framework' in manifest['dependencies']
+          deps = manifest['dependencies']
+          assert 'com.unity.test-framework' in deps
+          assert deps.get('com.unity.render-pipelines.universal') == '17.3.0'
+          assert deps.get('com.unity.ugui') == '2.0.0'
           assert (root / 'ProjectSettings/ProjectVersion.txt').read_text().strip() == 'm_EditorVersion: 6000.3.0f1'
+          runtime = json.loads((root / 'Assets/SKYWARD/Scripts/SKYWARD.Runtime.asmdef').read_text())
+          assert 'UnityEngine.UI' in runtime.get('references', []), 'Runtime assembly must reference uGUI'
           for path in root.rglob('*.asmdef'):
               json.loads(path.read_text())
-          for required in [
+          required = [
+              'Assets/SKYWARD/Editor/SkywardSceneSetup.cs',
               'Assets/SKYWARD/Scripts/Aircraft/AircraftController.cs',
               'Assets/SKYWARD/Scripts/Aircraft/AerodynamicModel.cs',
               'Assets/SKYWARD/Scripts/Environment/DemoAirportBuilder.cs',
+              'Assets/SKYWARD/Scripts/Environment/ProceduralTrainerBuilder.cs',
               'Assets/SKYWARD/Scripts/UI/FlightHud.cs',
               'Assets/SKYWARD/Scripts/UI/CockpitInstrumentPanel.cs',
               'Assets/SKYWARD/Tests/EditMode/AerodynamicModelTests.cs',
-              'Assets/SKYWARD/Tests/PlayMode/AircraftPhysicsPlayModeTests.cs'
-          ]:
-              assert (root / required).is_file(), f'Missing {required}'
-          print('Unity metadata, asmdef JSON and required flight source files validated.')
+              'Assets/SKYWARD/Tests/PlayMode/AircraftPhysicsPlayModeTests.cs',
+          ]
+          for item in required:
+              assert (root / item).is_file(), f'Missing {item}'
+          setup = (root / 'Assets/SKYWARD/Editor/SkywardSceneSetup.cs').read_text()
+          assert 'EnsureUniversalRenderPipeline();' in setup
+          assert 'GraphicsSettings.defaultRenderPipeline = pipeline;' in setup
+          assert 'EditorBuildSettings.scenes = buildScenes.ToArray();' in setup
+          all_cs = '\n'.join(p.read_text() for p in (root / 'Assets').rglob('*.cs'))
+          assert 'Arial.ttf' not in all_cs, 'Use the supported LegacyRuntime.ttf built-in font'
+          assert 'LegacyRuntime.ttf' in all_cs
+          print('Project metadata, package versions, uGUI reference, URP setup, build-scene registration and required source files validated.')
           PY
       - name: Check C# delimiter balance
         run: |
@@ -47,3 +62,6 @@ jobs:
               assert source.count('[') == source.count(']'), f'Unbalanced brackets: {path}'
           print(f'Checked delimiters in {len(files)} C# files.')
           PY
+
+# This workflow performs source-level validation only. It does not compile Unity
+# assemblies, run the Unity Test Framework, build a player, or measure runtime FPS.
