@@ -45,6 +45,7 @@ The following targeted changes were committed to `main`:
 7. **Player scene registration:** made the generated demo scene register in Editor Build Settings so it is included in a later player build.
 8. **Material reuse:** cached procedural airport and trainer materials and used a URP Lit shader with a Standard fallback.
 9. **Wheel mesh alignment:** corrected the procedural wheel mesh orientation and its WheelCollider visual pose alignment.
+10. **Flight-time save accounting:** changed pause/quit persistence to add only newly elapsed session time, preventing repeated save events from counting the same flight seconds twice.
 
 These are source edits. They have not yet been validated by importing/compiling/running the project inside Unity.
 
