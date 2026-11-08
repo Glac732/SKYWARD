@@ -81,7 +81,7 @@ namespace Skyward.Tests
         [Test]
         public void PostStallLiftCoefficientFalls()
         {
-            float belowStall = Evaluate(new Vector3(0f, -5f, 30f)).liftCoefficient;
+            float belowStall = Evaluate(new Vector3(0f, -8f, 30f)).liftCoefficient;
             float beyondStall = Evaluate(new Vector3(0f, -18f, 30f)).liftCoefficient;
             Assert.Greater(belowStall, beyondStall);
         }
