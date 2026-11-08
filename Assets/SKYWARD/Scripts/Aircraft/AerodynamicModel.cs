@@ -70,9 +70,9 @@ namespace Skyward.Aircraft
             float pitchRate = angularVelocityLocal.x * config.meanChordM / (2f * Mathf.Max(speed, 2f));
             float rollRate = angularVelocityLocal.z * config.wingSpanM / (2f * Mathf.Max(speed, 2f));
             float yawRate = angularVelocityLocal.y * config.wingSpanM / (2f * Mathf.Max(speed, 2f));
-            float cm = config.pitchControlMoment * controls.x - config.pitchDamping * pitchRate - config.pitchStability * alpha;
+            float cm = config.pitchControlMoment * controls.x - config.pitchDamping * pitchRate + config.pitchStability * alpha;
             float clRoll = config.rollControlMoment * controls.y - config.rollDamping * rollRate;
-            float cn = config.yawControlMoment * controls.z - config.yawDamping * yawRate - config.yawStability * beta;
+            float cn = config.yawControlMoment * controls.z - config.yawDamping * yawRate + config.yawStability * beta;
             Vector3 moment = new Vector3(
                 q * config.wingAreaM2 * config.meanChordM * cm,
                 q * config.wingAreaM2 * config.wingSpanM * cn,
