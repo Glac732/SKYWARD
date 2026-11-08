@@ -51,7 +51,7 @@ namespace Skyward.UI
             rect.anchoredPosition = anchoredPosition;
             rect.sizeDelta = size;
             Text text = go.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             text.fontSize = fontSize;
             text.color = Color.white;
             text.alignment = anchor;
