@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Skyward.Environment
 {
     public static class DemoAirportBuilder
     {
+        private static readonly Dictionary<Color, Material> MaterialCache = new Dictionary<Color, Material>();
         public static GameObject Build()
         {
             GameObject root = new GameObject("SKYWARD Demo Airport");
@@ -66,9 +68,7 @@ namespace Skyward.Environment
             Renderer renderer = lightObject.GetComponent<Renderer>();
             if (renderer != null)
             {
-                Material material = new Material(Shader.Find("Standard"));
-                material.color = new Color(0.85f, 0.92f, 1f);
-                renderer.sharedMaterial = material;
+                renderer.sharedMaterial = GetSharedMaterial(new Color(0.85f, 0.92f, 1f));
             }
             return lightObject;
         }
@@ -83,11 +83,27 @@ namespace Skyward.Environment
             Renderer renderer = go.GetComponent<Renderer>();
             if (renderer != null)
             {
-                Material material = new Material(Shader.Find("Standard"));
-                material.color = color;
-                renderer.sharedMaterial = material;
+                renderer.sharedMaterial = GetSharedMaterial(color);
             }
             return go;
+        }
+
+        private static Material GetSharedMaterial(Color color)
+        {
+            if (MaterialCache.TryGetValue(color, out Material cached) && cached != null)
+                return cached;
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Standard");
+            if (shader == null)
+            {
+                Debug.LogError("SKYWARD: No supported Lit shader is available for airport materials.");
+                return null;
+            }
+
+            Material material = new Material(shader) { color = color };
+            MaterialCache[color] = material;
+            return material;
         }
     }
 }
