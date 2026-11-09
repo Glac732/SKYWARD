@@ -51,7 +51,7 @@ The desktop runtime uses Unity's legacy `Input` API. Android builds receive an o
 - Three selectable procedural airport layouts: Al Khor desert, Coastal Bay and Highland Regional.
 - Procedural cloud clusters, directional sunlight, fog/low-visibility presets, wind profiles and rain particle effects.
 - Runtime main menu, aircraft selection, four flight-school lessons, six mission challenges and pilot career/achievement tracking.
-- Animated flaps, ailerons, elevators and rudder driven by pilot control inputs.\n- Post-landing flight debrief with telemetry-based landing score and grade.\n- Android touch controls and procedural engine/wind ambience audio.
+- Animated flaps, ailerons, elevators and rudder driven by pilot control inputs.\n- Post-landing flight debrief with telemetry-based landing score and grade.\n- Android touch controls for pitch, roll, rudder, throttle, brakes, gear, flaps and cockpit/chase camera switching, plus procedural engine/wind ambience audio.
 - Chase/cockpit camera toggle, mouse look and chase zoom.
 - Runtime flight HUD and a seven-field cockpit text instrument strip backed by live controller values.
 - Local PlayerPrefs save data with a backup key and basic sanitisation.
