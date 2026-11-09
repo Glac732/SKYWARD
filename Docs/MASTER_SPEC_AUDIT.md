@@ -99,7 +99,7 @@ The following table follows the master prompt's 48-section structure. “Partial
 | 38. First-time experience | Interactive onboarding and tutorial stages | **Not implemented** |
 | 39. Flight results/statistics | Honest flight summary from accumulated simulation data | **Partial** — some telemetry/maxima exist; no complete result screen or robust record capture |
 | 40. Achievements | Data-validated unlocks and rewards | **Not implemented** |
-| 41. Quality assurance | Editor tests, full gameplay/device/build/performance matrix | **Partial** — 19 test cases authored but unrun; no gameplay/device test evidence |
+| 41. Quality assurance | Editor tests, full gameplay/device/build/performance matrix | **Partial** — 21 test cases authored but unrun; no gameplay/device test evidence |
 | 42. Anti-placeholder | Missing systems honestly disabled and documented | **Partial** — README/report disclose prototype; basic primitives and limited prototype UI remain |
 | 43. Code quality | Maintainable, tested, efficient release code | **Partial** — scripts separated; still uncompiled/unreviewed in Unity and many systems absent |
 | 44. Development workflow | Implement/build/run/test/inspect/fix each milestone | **Not met** — no Unity Editor available for those runtime steps |
