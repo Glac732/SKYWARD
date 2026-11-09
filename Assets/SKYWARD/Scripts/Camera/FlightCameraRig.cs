@@ -15,6 +15,7 @@ namespace Skyward.CameraSystem
         private float pitch = 8f;
 
         public void SetTarget(Transform value) => target = value;
+        public void ToggleView() => cockpit = !cockpit;
 
         private void Awake()
         {
