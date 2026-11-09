@@ -28,7 +28,7 @@ namespace Skyward.UI
         private int airportIndex;
         private SkywardEnvironmentDirector environment;
         private static readonly string[] AirportLabels = { "AL KHOR • DESERT", "COASTAL BAY • SHORELINE", "HIGHLAND • MOUNTAINS" };
-        private static readonly string[] AircraftNames = { "SKYWARD 152 • TRAINER", "SKYWARD  touring • TOURER", "SKYWARD AERO • AEROBATIC" };
+        private static readonly string[] AircraftNames = { "SKYWARD 152 • TRAINER", "SKYWARD TOURER • TOURING", "SKYWARD AERO • AEROBATIC" };
         private static readonly string[] MissionNames = { "FIRST FLIGHT", "CIRCUIT & LANDING", "CROSS-COUNTRY", "HIGH ALTITUDE", "SOFT TOUCHDOWN", "WINDY APPROACH" };
         private static readonly string[] LessonNames = { "01  PREFLIGHT & CONTROLS", "02  TAKE-OFF", "03  CLIMB & LEVEL FLIGHT", "04  APPROACH & LANDING" };
         private static readonly string[] WeatherNames = { "CLEAR • CALM", "BREEZY • 8 m/s", "CROSSWIND • 12 m/s", "DUSK • FOG", "RAIN • LOW VISIBILITY" };
@@ -43,9 +43,11 @@ namespace Skyward.UI
         private void Start()
         {
             environment = FindObjectOfType<SkywardEnvironmentDirector>();
-            airportIndex = PlayerPrefs.GetInt("SKYWARD_ACTIVE_AIRPORT", 0);
-            weatherIndex = PlayerPrefs.GetInt("SKYWARD_WEATHER", 0);
+            airportIndex = Mathf.Clamp(PlayerPrefs.GetInt("SKYWARD_ACTIVE_AIRPORT", 0), 0, 2);
+            weatherIndex = Mathf.Clamp(PlayerPrefs.GetInt("SKYWARD_WEATHER", 0), 0, 4);
+            aircraftIndex = Mathf.Clamp(PlayerPrefs.GetInt("SKYWARD_AIRCRAFT", 0), 0, 2);
             BuildCanvas();
+            if (aircraftIndex != 0) ApplyAircraft();
             ApplyWeather();
             ShowHome();
         }
@@ -222,6 +224,9 @@ namespace Skyward.UI
             c.controlAuthority = aircraftIndex == 2 ? 1.35f : aircraftIndex == 1 ? 0.9f : 1f;
             c.maxLiftCoefficient = aircraftIndex == 1 ? 1.55f : aircraftIndex == 2 ? 1.65f : 1.45f;
             c.stallAngleDeg = aircraftIndex == 2 ? 18f : 16f;
+            PlayerPrefs.SetInt("SKYWARD_AIRCRAFT", aircraftIndex);
+            SkywardSettings.Data.selectedAircraftId = c.aircraftId;
+            SkywardSettings.Save();
             aircraft.Reconfigure(c);
             ApplyVisualPreset(aircraft.transform, aircraftIndex);
             ShowAircraft();
