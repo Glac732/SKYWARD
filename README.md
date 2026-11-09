@@ -51,7 +51,7 @@ The desktop runtime uses Unity's legacy `Input` API. Android builds receive an o
 - Three selectable procedural airport layouts: Al Khor desert, Coastal Bay and Highland Regional.
 - Procedural cloud clusters, directional sunlight, fog/low-visibility presets, wind profiles and rain particle effects.
 - Runtime main menu, aircraft selection, four flight-school lessons, six mission challenges and pilot career/achievement tracking.
-- Android touch controls and procedural engine/wind ambience audio.
+- Animated flaps, ailerons, elevators and rudder driven by pilot control inputs.\n- Post-landing flight debrief with telemetry-based landing score and grade.\n- Android touch controls and procedural engine/wind ambience audio.
 - Chase/cockpit camera toggle, mouse look and chase zoom.
 - Runtime flight HUD and a seven-field cockpit text instrument strip backed by live controller values.
 - Local PlayerPrefs save data with a backup key and basic sanitisation.
@@ -94,7 +94,7 @@ The GitHub Actions workflow checks project metadata, expected package and assemb
 
 ## Not currently delivered
 
-There is no compiled Windows executable/installer, Android APK/AAB, iOS/macOS/Linux player, signed release, or verified downloadable application build yet. The current aircraft choices are performance presets on one procedural airframe, not separate detailed aircraft. Airport variants share a runway layout and are not geographically accurate real airports. Training, missions, career and achievements are initial offline systems; landing scoring/results, navigation instruments, full progression balancing and robust save migration remain incomplete. Weather effects are procedural prototypes, not a full meteorological simulation. There are no production aircraft/environment/audio assets, detailed cockpit model, comprehensive settings/accessibility/localisation suite, multiplayer/network backend, cloud save, content updater or measured device performance profiles.
+There is no compiled Windows executable/installer, Android APK/AAB, iOS/macOS/Linux player, signed release, or verified downloadable application build yet. The current aircraft choices are performance presets on one procedural airframe, not separate detailed aircraft. Airport variants share a runway layout and are not geographically accurate real airports. Training, missions, career and achievements are initial offline systems; navigation instruments, full progression balancing and robust save migration remain incomplete. Weather effects are procedural prototypes, not a full meteorological simulation. There are no production aircraft/environment/audio assets, detailed cockpit model, comprehensive settings/accessibility/localisation suite, multiplayer/network backend, cloud save, content updater or measured device performance profiles.
 
 Do not present this repository as a finished or release-ready game until those systems are implemented as required and the actual Unity build/test/device checks have passed.
 
