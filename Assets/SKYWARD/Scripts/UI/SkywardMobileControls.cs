@@ -41,6 +41,10 @@ namespace Skyward.UI
             AddActionButton(canvasObject.transform, "THROTTLE −", new Vector2(0.94f, 0.29f), () => aircraft.SetThrottle(aircraft.Throttle - 0.08f));
             AddActionButton(canvasObject.transform, "GEAR", new Vector2(0.82f, 0.48f), aircraft.ToggleGear);
             AddActionButton(canvasObject.transform, "FLAPS", new Vector2(0.94f, 0.48f), () => aircraft.SetFlaps(aircraft.FlapSetting >= 0.19f ? 0f : aircraft.FlapSetting + 0.1f));
+            AddActionButton(canvasObject.transform, "CAMERA", new Vector2(0.88f, 0.79f), () => {
+                Skyward.CameraSystem.FlightCameraRig camera = FindObjectOfType<Skyward.CameraSystem.FlightCameraRig>();
+                if (camera != null) camera.ToggleView();
+            });
             AddHoldButton(canvasObject.transform, "BRAKES", new Vector2(0.88f, 0.65f), MobileAxis.Brake, 1f);
         }
 
