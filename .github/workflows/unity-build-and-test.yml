@@ -9,6 +9,8 @@ on:
       - 'ProjectSettings/**'
       - '.github/workflows/unity-build-and-test.yml'
       - '.github/workflows/source-validation.yml'
+      - 'README.md'
+      - 'Docs/**'
   workflow_dispatch:
 
 permissions:
