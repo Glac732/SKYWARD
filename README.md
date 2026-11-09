@@ -82,7 +82,7 @@ Only call a build verified when its job completed successfully. A successful pla
 
 ## Tests and verification
 
-Test source is present for aerodynamic calculations, save behaviour and selected aircraft/ground-contact integration behaviours. **19 test cases are authored** across EditMode and PlayMode assemblies; they have not been executed in Unity in the current environment.
+Test source is present for aerodynamic calculations, save behaviour, aircraft/ground-contact integration, full-session startup and rendered-frame diagnostics. **21 test cases are authored** across EditMode and PlayMode assemblies; they have not been executed in Unity until the Unity licence secret is configured and the GitHub Actions workflow runs.
 
 The GitHub Actions workflow checks project metadata, expected package and assembly references, presence of required source files, selected setup-code invariants and basic C# delimiter balance. It is a source-validation workflow only. It does **not** compile Unity C#, run EditMode/PlayMode tests, build a player, inspect rendered graphics, or benchmark performance.
 
