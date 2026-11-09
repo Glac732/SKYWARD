@@ -44,6 +44,8 @@ namespace Skyward.Tests
                 "Trainer wing must use a custom 3D mesh.");
             Assert.IsNotNull(aircraft.GetComponent<Skyward.Audio.SkywardEngineAudio>(),
                 "Aircraft must have its procedural engine audio component.");
+            Assert.IsNotNull(Object.FindObjectOfType<SkywardFlightResults>(),
+                "Session must create the post-landing debrief panel.");
             Assert.IsNotNull(hud, "Session startup must create the flight HUD.");
             Assert.IsNotNull(cockpit, "Session startup must create cockpit instruments.");
             Assert.IsNotNull(mainCamera, "Session startup must create a tagged main camera.");
