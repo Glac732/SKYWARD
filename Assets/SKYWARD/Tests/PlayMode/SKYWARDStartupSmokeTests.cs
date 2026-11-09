@@ -2,6 +2,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.Rendering;
 using Skyward.Aircraft;
 using Skyward.Core;
 using Skyward.Environment;
