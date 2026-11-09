@@ -270,7 +270,10 @@ namespace Skyward.UI
             string[] details = {
                 "FIRST FLIGHT\nTake off, climb above 300 m and return for a runway landing.",
                 "CIRCUIT & LANDING\nComplete a circuit, maintain control and land on the runway.",
-                "CROSS-COUNTRY\nClimb above 800 m and fly for at least 180 seconds."
+                "CROSS-COUNTRY\nClimb above 800 m and fly for at least 180 seconds.",
+                "HIGH ALTITUDE\nReach 1,500 m above the airfield.",
+                "SOFT TOUCHDOWN\nLand on the runway with a vertical touchdown speed gentler than 2 m/s.",
+                "WINDY APPROACH\nLand safely on the runway in the crosswind weather preset."
             };
             body.text = MissionNames[missionIndex] + "\n\n" + details[missionIndex] +
                 "\n\nMission selection is saved locally.";
