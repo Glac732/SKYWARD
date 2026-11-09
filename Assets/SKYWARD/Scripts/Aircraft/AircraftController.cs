@@ -34,6 +34,8 @@ namespace Skyward.Aircraft
         private Transform rightWheelVisual;
         private Transform noseWheelVisual;
         private Transform propeller;
+        private Transform leftFlapVisual, rightFlapVisual, leftAileronVisual, rightAileronVisual;
+        private Transform leftElevatorVisual, rightElevatorVisual, rudderVisual;
         private AeroResult lastAero;
         private float flightSeconds;
         private float maximumAltitude;
@@ -171,6 +173,13 @@ namespace Skyward.Aircraft
             rightWheelVisual = FindChild("Right wheel");
             noseWheelVisual = FindChild("Nose wheel");
             propeller = FindChild("Propeller");
+            leftFlapVisual = FindChild("Left flap");
+            rightFlapVisual = FindChild("Right flap");
+            leftAileronVisual = FindChild("Left aileron");
+            rightAileronVisual = FindChild("Right aileron");
+            leftElevatorVisual = FindChild("Left elevator");
+            rightElevatorVisual = FindChild("Right elevator");
+            rudderVisual = FindChild("Rudder");
         }
 
         private Transform FindChild(string childName)
@@ -303,6 +312,16 @@ namespace Skyward.Aircraft
             UpdateWheelVisual(noseWheel, noseWheelVisual);
             if (propeller != null && engineRunning)
                 propeller.Rotate(Vector3.forward, Mathf.Lerp(300f, 3600f, throttle) * Time.deltaTime, Space.Self);
+            float flapAngle = -flapSetting * 115f;
+            if (leftFlapVisual != null) leftFlapVisual.localRotation = Quaternion.Euler(flapAngle, 0f, 0f);
+            if (rightFlapVisual != null) rightFlapVisual.localRotation = Quaternion.Euler(flapAngle, 0f, 0f);
+            float aileronAngle = controls.y * 22f;
+            if (leftAileronVisual != null) leftAileronVisual.localRotation = Quaternion.Euler(aileronAngle, 0f, 0f);
+            if (rightAileronVisual != null) rightAileronVisual.localRotation = Quaternion.Euler(-aileronAngle, 0f, 0f);
+            float elevatorAngle = -controls.x * 24f;
+            if (leftElevatorVisual != null) leftElevatorVisual.localRotation = Quaternion.Euler(elevatorAngle, 0f, 0f);
+            if (rightElevatorVisual != null) rightElevatorVisual.localRotation = Quaternion.Euler(elevatorAngle, 0f, 0f);
+            if (rudderVisual != null) rudderVisual.localRotation = Quaternion.Euler(0f, controls.z * 24f, 0f);
         }
 
         private static void UpdateWheelVisual(WheelCollider wheel, Transform visual)
