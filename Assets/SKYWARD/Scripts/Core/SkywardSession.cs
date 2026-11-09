@@ -11,7 +11,6 @@ namespace Skyward.Core
     public sealed class SkywardSession : MonoBehaviour
     {
         [SerializeField] private AircraftConfig aircraftConfig;
-        private bool paused;
         private SkywardSaveData profile;
         private AircraftController activeAircraft;
         private float flightSecondsAlreadyRecorded;
@@ -63,15 +62,6 @@ namespace Skyward.Core
             cockpit.SetAircraft(controller);
             SkywardGameMenu.Create(controller);
             SkywardMobileControls.Create(controller);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                paused = !paused;
-                Time.timeScale = paused ? 0f : 1f;
-            }
         }
 
         private void OnApplicationPause(bool pause)
