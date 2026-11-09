@@ -39,6 +39,7 @@ jobs:
               'Assets/SKYWARD/Tests/EditMode/AerodynamicModelTests.cs',
               'Assets/SKYWARD/Tests/PlayMode/AircraftPhysicsPlayModeTests.cs',
               'Assets/SKYWARD/Tests/PlayMode/SKYWARDStartupSmokeTests.cs',
+              'Assets/SKYWARD/Tests/PlayMode/SKYWARDGraphicsSmokeTests.cs',
           ]
           for item in required:
               assert (root / item).is_file(), f'Missing {item}'
