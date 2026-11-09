@@ -54,6 +54,32 @@ The runtime controller currently reads Unity's legacy `Input` API. Configurable 
 
 The trainer model and airport are deliberately primitive/procedural development assets. They are not production aircraft/environment art. The cockpit is not a detailed 3D flight deck.
 
+## Build, test and download from GitHub Actions
+
+The repository includes `.github/workflows/unity-build-and-test.yml`. It is configured to run Unity EditMode/PlayMode tests, create a Windows x64 player ZIP and create an Android ARM64 APK.
+
+### One-time Unity licence setup
+
+GitHub-hosted runners need an activated Unity licence. In the repository, open **Settings → Secrets and variables → Actions → New repository secret** and add:
+
+- `UNITY_LICENSE`: the activated Unity licence file contents.
+- `UNITY_EMAIL` and `UNITY_PASSWORD`: only if required by the selected Unity licence/activation method.
+
+Never commit a licence file or password into the repository. The workflow checks for `UNITY_LICENSE` before starting the Unity jobs. Without it, no Unity tests or player binaries can be produced.
+
+### Run and download
+
+1. Open the repository's **Actions** tab.
+2. Select **SKYWARD Unity Build and Test**.
+3. Choose **Run workflow** on the `main` branch, or wait for a push to `main` to start it.
+4. Open the run and wait for the jobs to finish.
+5. Under **Artifacts** at the bottom of the run page, download:
+   - `SKYWARD-Windows-x64` — unzip it and launch `SKYWARD.exe`.
+   - `SKYWARD-Android-ARM64-APK` — install `SKYWARD.apk` on a compatible Android device.
+   - `SKYWARD-Unity-Test-Results` — inspect the EditMode/PlayMode test report and logs.
+
+Only call a build verified when its job completed successfully. A successful player build still needs hands-on gameplay, graphics and device testing before public release.
+
 ## Tests and verification
 
 Test source is present for aerodynamic calculations, save behaviour and selected aircraft/ground-contact integration behaviours. **19 test cases are authored** across EditMode and PlayMode assemblies; they have not been executed in Unity in the current environment.
