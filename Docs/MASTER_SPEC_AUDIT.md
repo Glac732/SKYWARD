@@ -8,9 +8,9 @@
 
 ## 1. Executive verdict
 
-The current repository is an early Unity source prototype, not the complete application requested by the master specification. It contains the beginnings of a physically driven trainer aircraft and a single procedural runway environment, along with rudimentary telemetry and local persistence.
+The current repository remains an early Unity source prototype, not the complete application requested by the master specification. Since the first audit, source additions have introduced a runtime front end, aircraft performance presets, flight-school lessons, mission challenges, career statistics, three procedural airport layouts, weather effects and Android touch controls.
 
-It does **not** yet provide a polished, finished, full flight simulator. It does not include a finished main menu or most of the player experience, production 3D art, mobile controls, platform builds, or a verified take-off-to-landing gameplay loop.
+It still does **not** provide a polished, finished, full flight simulator. The aircraft presets share one generated airframe, airports are variations on one runway layout, and there are no production aircraft/environment assets or verified online services. Unity compilation, playmode tests and platform builds remain unverified.
 
 The prompt explicitly requires that features are not represented as available unless implemented and tested. This report therefore marks only source-visible systems as implemented; it does not infer that they work at runtime.
 
@@ -28,7 +28,7 @@ The prompt explicitly requires that features are not represented as available un
 | Environment | One procedural runway/taxiway/apron, buildings, lights and primitive distant hills | Prototype only |
 | HUD/cockpit | Screen overlay and seven textual world-space instrument readouts | Rudimentary; not production UI or a real cockpit |
 | Persistence | Small PlayerPrefs profile with backup key, version field and basic sanitisation | Partial; not full profile/progression system |
-| Tests | EditMode and PlayMode test source files | 19 cases authored; none run in this environment |
+| Tests | EditMode and PlayMode test source files | 22 cases authored; none run in this environment |
 | CI | GitHub Actions source checks plus a new Unity test/build workflow | Source checks passed; Unity workflow requires configured licence and has not yet been proven successful |
 | Packaging | Unity project source only | No executable release artifacts |
 
@@ -50,6 +50,11 @@ The following targeted changes were committed to `main`:
 12. **Unity CI pipeline:** added a GitHub Actions workflow to run EditMode/PlayMode tests, build both player targets, upload ZIP/APK artifacts and preserve test reports. It requires an activated Unity licence in the repository's `UNITY_LICENSE` Actions secret.
 13. **Startup smoke test:** added a PlayMode test for creation of the aircraft, three landing wheels, airport, main camera, HUD, cockpit instruments and configured render-pipeline asset.
 14. **Graphics diagnostics:** added an offscreen 960×540 render capture, non-blank frame check and 120-frame timing sample; the screenshot is saved into the Unity test artifacts when the runner has a graphics device.
+15. **Runtime front end:** added main menu navigation, aircraft presets, flight-school lessons, mission board, career statistics and basic achievement flags.
+16. **Airport/environment variants:** added three procedural airport layouts plus cloud clusters, lighting, fog, wind and rain effects.
+17. **Aircraft/cockpit visuals:** replaced the trainer fuselage and wing primitives with generated meshes and added a basic cockpit dashboard, yoke, seat and instrument faces.
+18. **Mobile/audio foundations:** added Android touch controls, throttle-responsive procedural engine audio and procedural wind/weather ambience.
+19. **Regression coverage:** added airport/weather environment smoke coverage and expanded startup checks for custom meshes and engine audio.
 
 These are source edits. They have not yet been validated by importing/compiling/running the project inside Unity.
 
@@ -64,28 +69,28 @@ The following table follows the master prompt's 48-section structure. “Partial
 | 3. Development philosophy | Functional systems, honest feature states, measured performance | **Partial** — source structure and test intent exist; runtime validation and measurements absent |
 | 4. Technical architecture | Modular engine, simulation, world, UI, services, tests | **Partial** — small modular C# layout; most modules do not exist |
 | 5. Visual direction | Premium aviation-realism art, natural sky, PBR environment | **Not met** — primitive geometry/materials; no production art or visual review |
-| 6. Aircraft collection | Multiple meaningfully distinct aircraft, preview and selection | **Not met** — one trainer prototype; no selection screen |
+| 6. Aircraft collection | Multiple meaningfully distinct aircraft, preview and selection | **Partial** — three physics/livery presets on one procedural airframe; no separate detailed aircraft models |
 | 7. Flight physics | Stable force/moment model and aircraft-specific behaviour | **Partial** — one estimated trainer model; no Unity validation or validated aircraft data |
-| 8. Flight control system | Keyboard, mouse, touch, controller, joystick, rebinding | **Partial** — legacy keyboard/mouse controls only; no remapping or mobile/device support |
+| 8. Flight control system | Keyboard, mouse, touch, controller, joystick, rebinding | **Partial** — legacy keyboard/mouse plus Android touch overlay; no remapping or joystick/gamepad support |
 | 9. Take-off, flight and landing | Complete preflight, taxi, take-off, free flight, approach, landing results | **Partial** — core controller and WheelCollider source; complete flight loop unverified; no preflight/results flow |
 | 10. Camera system | Eight camera modes, transitions, collision avoidance and settings | **Partial** — chase and cockpit only |
-| 11. Cockpit/instruments | Detailed 3D cockpit and aircraft-appropriate functional gauges | **Not met** — text readout strip, no realistic cockpit/gauges |
+| 11. Cockpit/instruments | Detailed 3D cockpit and aircraft-appropriate functional gauges | **Partial** — generated cockpit dashboard, seat, yoke, instrument faces and live text instruments; not an aircraft-authentic detailed cockpit |
 | 12. Flight HUD | Navigation, objectives, configurable professional HUD | **Partial** — basic telemetry panel; navigation, objective logic and customisation absent |
-| 13. World/environment | Scalable streamed world with LOD/culling and rich biomes | **Not met** — one small procedural demo region; no world streaming |
-| 14. Airport system | Functional airport catalog and selection | **Partial** — one prototype runway layout; airport metadata/selection and multiple airports absent |
-| 15. Weather/atmosphere | Visual and aerodynamic weather presets, rain/fog/cloud/wind | **Partial** — wind fields exist in controller; no weather UI/system or visual weather |
-| 16. Lighting/sky | Realistic sky, clouds, atmospheric effects, day/night | **Not met** — no designed sky/cloud/day-night implementation |
+| 13. World/environment | Scalable streamed world with LOD/culling and rich biomes | **Partial** — three generated airport surroundings with coastal/highland/desert variations; no streaming, LOD or world-scale biomes |
+| 14. Airport system | Functional airport catalog and selection | **Partial** — three selectable procedural airport variants sharing a common runway layout; no geographically accurate airport catalog |
+| 15. Weather/atmosphere | Visual and aerodynamic weather presets, rain/fog/cloud/wind | **Partial** — menu presets, wind, cloud clusters, fog and rain particles; not a full meteorological simulation |
+| 16. Lighting/sky | Realistic sky, clouds, atmospheric effects, day/night | **Partial** — procedural cloud clusters, directional sun, ambient sky tint and fog; no time-of-day cycle or production sky |
 | 17. Aircraft animations | State-driven surfaces, flaps, gear, controls, lights and doors | **Partial** — propeller/wheels are basic; control surfaces, lights/doors and detailed animation absent |
-| 18. Sound | Spatial aircraft/environmental sound and volume groups | **Not met** — no audio assets or sound system |
-| 19. Game modes | Free flight, training, landing challenge, time trial, career | **Not met** — only direct demo-session startup |
-| 20. Missions/objectives | Real objective state machine, progress, reward, failure | **Not met** |
+| 18. Sound | Spatial aircraft/environmental sound and volume groups | **Partial** — procedural throttle-responsive engine loop and wind/weather ambience; no authored spatial sound library or full volume groups |
+| 19. Game modes | Free flight, training, landing challenge, time trial, career | **Partial** — free flight, four lessons, six missions and basic career page; no full time-trial/career progression |
+| 20. Missions/objectives | Real objective state machine, progress, reward, failure | **Partial** — six telemetry-based mission completion checks; no full objective sequencing, rewards or failure/results flow |
 | 21. Player/profile/progression | Full profile, XP, levels, records, unlocks | **Partial** — small local profile and totals only |
 | 22. Aircraft customisation | Real 3D livery/customisation preview and save | **Not met** |
-| 23. Main menu | Premium 3D menu with working navigation | **Not met** |
+| 23. Main menu | Premium 3D menu with working navigation | **Partial** — runtime uGUI main menu with working navigation; not a polished 3D front end |
 | 24. Startup/loading | Robust startup stages and honest progress/error recovery | **Not met** |
 | 25. UI design system | Complete professional UI components and navigation | **Not met** — basic runtime-generated uGUI text |
-| 26. Settings | Graphics, audio, controls, gameplay, accessibility persisted | **Not met** — a few saved preference fields; no functioning settings UI |
-| 27. Mobile | Touch controls, responsive UI, platform profiling | **Not met** |
+| 26. Settings | Graphics, audio, controls, gameplay, accessibility persisted | **Partial** — weather, master volume and basic quality controls; no control mapping/accessibility suite |
+| 27. Mobile | Touch controls, responsive UI, platform profiling | **Partial** — Android touch-control overlay and scalable canvas; no device build or hardware profiling |
 | 28. Desktop/laptop | Player build, display options, controller support and hardware profiles | **Not met** — no build artifacts or measured hardware support |
 | 29. Multiplayer | Real sessions, authentication, sync/reconnect/server validation | **Not implemented** — correctly not exposed as available |
 | 30. Backend/database | Secure online services and migrations if online features are built | **Not implemented** — no backend; local prototype does not require it |
@@ -98,8 +103,8 @@ The following table follows the master prompt's 48-section structure. “Partial
 | 37. Accessibility/localisation | Language and unit options, scalable/accessibility UI | **Not implemented** |
 | 38. First-time experience | Interactive onboarding and tutorial stages | **Not implemented** |
 | 39. Flight results/statistics | Honest flight summary from accumulated simulation data | **Partial** — some telemetry/maxima exist; no complete result screen or robust record capture |
-| 40. Achievements | Data-validated unlocks and rewards | **Not implemented** |
-| 41. Quality assurance | Editor tests, full gameplay/device/build/performance matrix | **Partial** — 21 test cases authored but unrun; no gameplay/device test evidence |
+| 40. Achievements | Data-validated unlocks and rewards | **Partial** — local first landing, five landings, soft touchdown and ten-hour flags; no reward/unlock economy |
+| 41. Quality assurance | Editor tests, full gameplay/device/build/performance matrix | **Partial** — 22 test cases authored but unrun; no gameplay/device test evidence |
 | 42. Anti-placeholder | Missing systems honestly disabled and documented | **Partial** — README/report disclose prototype; basic primitives and limited prototype UI remain |
 | 43. Code quality | Maintainable, tested, efficient release code | **Partial** — scripts separated; still uncompiled/unreviewed in Unity and many systems absent |
 | 44. Development workflow | Implement/build/run/test/inspect/fix each milestone | **Not met** — no Unity Editor available for those runtime steps |
