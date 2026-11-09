@@ -333,6 +333,7 @@ namespace Skyward.UI
                     aircraft.transform.position = new Vector3(0f, 0.58f, -620f);
                     aircraft.transform.rotation = Quaternion.identity;
                     if (aircraft.Body != null) { aircraft.Body.velocity = Vector3.zero; aircraft.Body.angularVelocity = Vector3.zero; }
+                    aircraft.ResetFlightState();
                     flightRecorded = false;
                 }
                 ShowAirports();
