@@ -24,11 +24,12 @@ namespace Skyward.UI
         private bool menuOpen = true;
         private float wind;
         private int weatherIndex;
+        private bool flightRecorded;
         private int airportIndex;
         private SkywardEnvironmentDirector environment;
         private static readonly string[] AirportLabels = { "AL KHOR • DESERT", "COASTAL BAY • SHORELINE", "HIGHLAND • MOUNTAINS" };
         private static readonly string[] AircraftNames = { "SKYWARD 152 • TRAINER", "SKYWARD  touring • TOURER", "SKYWARD AERO • AEROBATIC" };
-        private static readonly string[] MissionNames = { "FIRST FLIGHT", "CIRCUIT & LANDING", "CROSS-COUNTRY" };
+        private static readonly string[] MissionNames = { "FIRST FLIGHT", "CIRCUIT & LANDING", "CROSS-COUNTRY", "HIGH ALTITUDE", "SOFT TOUCHDOWN", "WINDY APPROACH" };
         private static readonly string[] LessonNames = { "01  PREFLIGHT & CONTROLS", "02  TAKE-OFF", "03  CLIMB & LEVEL FLIGHT", "04  APPROACH & LANDING" };
         private static readonly string[] WeatherNames = { "CLEAR • CALM", "BREEZY • 8 m/s", "CROSSWIND • 12 m/s", "DUSK • CALM" };
 
@@ -74,12 +75,19 @@ namespace Skyward.UI
                     status.text = "FLIGHT SCHOOL PASSED  •  " + LessonNames[lesson];
                     lessonPassedThisFrame = true;
                 }
+                if (aircraft.HasLanded && !flightRecorded) RecordFlight();
                 int mission = PlayerPrefs.GetInt("SKYWARD_ACTIVE_MISSION", 0);
                 bool complete = mission == 0
                     ? aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway
                     : mission == 1
                         ? aircraft.FlightSeconds >= 90f && aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway
-                        : aircraft.MaximumAltitude >= 800f && aircraft.FlightSeconds >= 180f;
+                        : mission == 2
+                            ? aircraft.MaximumAltitude >= 800f && aircraft.FlightSeconds >= 180f
+                            : mission == 3
+                                ? aircraft.MaximumAltitude >= 1500f
+                                : mission == 4
+                                    ? aircraft.HasLanded && aircraft.TouchdownOnRunway && aircraft.TouchdownVerticalSpeed > -2.0f
+                                    : aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway && aircraft.TouchdownVerticalSpeed > -3.0f;
                 if (complete && PlayerPrefs.GetInt("SKYWARD_MISSION_DONE_" + mission, 0) == 0)
                 {
                     PlayerPrefs.SetInt("SKYWARD_MISSION_DONE_" + mission, 1);
@@ -112,14 +120,14 @@ namespace Skyward.UI
             panel.transform.SetParent(canvasObject.transform, false);
             RectTransform p = panel.GetComponent<RectTransform>();
             p.anchorMin = new Vector2(0.5f, 0.5f); p.anchorMax = new Vector2(0.5f, 0.5f);
-            p.pivot = new Vector2(0.5f, 0.5f); p.sizeDelta = new Vector2(760, 650);
+            p.pivot = new Vector2(0.5f, 0.5f); p.sizeDelta = new Vector2(760, 820);
             panel.GetComponent<Image>().color = new Color(0.015f, 0.035f, 0.055f, 0.96f);
 
             title = MakeText("SKYWARD", new Vector2(0, 275), new Vector2(700, 65), 42, TextAnchor.MiddleCenter, panel.transform);
             title.fontStyle = FontStyle.Bold;
             body = MakeText("", new Vector2(0, 75), new Vector2(650, 300), 23, TextAnchor.MiddleCenter, panel.transform);
             body.lineSpacing = 1.25f;
-            status = MakeText("", new Vector2(0, -345), new Vector2(800, 35), 17, TextAnchor.MiddleCenter, canvasObject.transform);
+            status = MakeText("", new Vector2(0, -510), new Vector2(1000, 35), 17, TextAnchor.MiddleCenter, canvasObject.transform);
         }
 
         private Text MakeText(string value, Vector2 position, Vector2 size, int fontSize, TextAnchor anchor, Transform parent)
@@ -169,7 +177,8 @@ namespace Skyward.UI
             AddButton("FLIGHT SCHOOL", 160, -190, ShowLessons);
             AddButton("MISSIONS", -160, -265, ShowMissions);
             AddButton("WEATHER & SETTINGS", 160, -265, ShowSettings);
-            AddButton("AIRPORT SELECT", 0, -330, ShowAirports, 330);
+            AddButton("CAREER & ACHIEVEMENTS", -160, -330, ShowCareer, 310);
+            AddButton("AIRPORT SELECT", 160, -330, ShowAirports, 290);
             status.text = "ESC  MENU / RESUME";
         }
 
@@ -263,11 +272,40 @@ namespace Skyward.UI
             };
             body.text = MissionNames[missionIndex] + "\n\n" + details[missionIndex] +
                 "\n\nMission selection is saved locally.";
-            AddButton("◀ PREVIOUS", -160, -165, () => { missionIndex = (missionIndex + 2) % 3; ShowMissions(); });
-            AddButton("NEXT ▶", 160, -165, () => { missionIndex = (missionIndex + 1) % 3; ShowMissions(); });
+            AddButton("◀ PREVIOUS", -160, -165, () => { missionIndex = (missionIndex + 5) % 6; ShowMissions(); });
+            AddButton("NEXT ▶", 160, -165, () => { missionIndex = (missionIndex + 1) % 6; ShowMissions(); });
             AddButton("ACCEPT MISSION", 0, -240, () => { PlayerPrefs.SetInt("SKYWARD_ACTIVE_MISSION", missionIndex); PlayerPrefs.Save(); CloseMenu(); }, 330);
             AddButton("BACK", 0, -305, ShowHome);
         }
+
+        private void RecordFlight()
+        {
+            flightRecorded = true;
+            var profile = SkywardSettings.Data;
+            profile.completedFlights += 1;
+            if (aircraft.TouchdownOnRunway) profile.successfulLandings += 1;
+            profile.totalFlightSeconds += Mathf.Max(0f, aircraft.FlightSeconds);
+            SkywardSettings.Save();
+            if (profile.completedFlights >= 1) PlayerPrefs.SetInt("SKYWARD_ACH_FIRST_LANDING", 1);
+            if (profile.successfulLandings >= 5) PlayerPrefs.SetInt("SKYWARD_ACH_FIVE_LANDINGS", 1);
+            if (profile.totalFlightSeconds >= 36000f) PlayerPrefs.SetInt("SKYWARD_ACH_TEN_HOURS", 1);
+            if (aircraft.TouchdownOnRunway && aircraft.TouchdownVerticalSpeed > -2f)
+                PlayerPrefs.SetInt("SKYWARD_ACH_SOFT_LANDING", 1);
+            PlayerPrefs.Save();
+        }
+
+        private void ShowCareer()
+        {
+            ClearButtons(); title.text = "PILOT CAREER";
+            var profile = SkywardSettings.Data;
+            int missions = 0;
+            for (int i = 0; i < 6; i++) missions += PlayerPrefs.GetInt("SKYWARD_MISSION_DONE_" + i, 0);
+            body.text = $"PILOT  {profile.playerName}\nTOTAL FLIGHT TIME  {profile.totalFlightSeconds / 3600f:0.0} HOURS\nCOMPLETED FLIGHTS  {profile.completedFlights}\nRUNWAY LANDINGS  {profile.successfulLandings}\nMISSIONS COMPLETED  {missions}/6\n\nACHIEVEMENTS\n{AchievementLine("SKYWARD_ACH_FIRST_LANDING", "First Landing")}\n{AchievementLine("SKYWARD_ACH_FIVE_LANDINGS", "Five Runway Landings")}\n{AchievementLine("SKYWARD_ACH_SOFT_LANDING", "Soft Touchdown")}\n{AchievementLine("SKYWARD_ACH_TEN_HOURS", "Ten Hours in the Air")}";
+            AddButton("BACK", 0, -305, ShowHome);
+        }
+
+        private string AchievementLine(string key, string name)
+            => (PlayerPrefs.GetInt(key, 0) == 1 ? "✓  " : "○  ") + name;
 
         private void ShowAirports()
         {
