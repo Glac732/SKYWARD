@@ -62,10 +62,12 @@ The repository includes `.github/workflows/unity-build-and-test.yml`. It is conf
 
 GitHub-hosted runners need an activated Unity licence. In the repository, open **Settings → Secrets and variables → Actions → New repository secret** and add:
 
-- `UNITY_LICENSE`: the activated Unity licence file contents.
-- `UNITY_EMAIL` and `UNITY_PASSWORD`: only if required by the selected Unity licence/activation method.
+- `UNITY_LICENSE`: the full contents of your activated Unity `.ulf` licence file.
+- `UNITY_EMAIL` and `UNITY_PASSWORD`: your Unity account credentials if required by the selected activation method.
 
-Never commit a licence file or password into the repository. The workflow checks for `UNITY_LICENSE` before starting the Unity jobs. Without it, no Unity tests or player binaries can be produced.
+For Unity Personal, activate it in **Unity Hub → Preferences → Licenses → Add → Get a free Personal license**. On Windows, the licence file is normally at `C:\\ProgramData\\Unity\\Unity_lic.ulf`. Open that file in a text editor, copy its complete contents, and paste them into the GitHub secret named `UNITY_LICENSE`. Add the email/password as separate secrets only if GameCI's activation method requests them.
+
+Never commit a licence file or password into the repository or paste them into this chat. The workflow checks for `UNITY_LICENSE` before starting the Unity jobs. Without it, no Unity tests or player binaries can be produced.
 
 ### Run and download
 
