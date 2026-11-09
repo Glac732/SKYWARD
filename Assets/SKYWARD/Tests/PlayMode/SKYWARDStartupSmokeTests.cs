@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Skyward.Aircraft;
 using Skyward.Core;
+using Skyward.Environment;
 using Skyward.UI;
 
 namespace Skyward.Tests
@@ -29,7 +30,8 @@ namespace Skyward.Tests
             FlightHud hud = Object.FindObjectOfType<FlightHud>();
             CockpitInstrumentPanel cockpit = Object.FindObjectOfType<CockpitInstrumentPanel>();
             Camera mainCamera = Camera.main;
-            GameObject airport = GameObject.Find("SKYWARD Demo Airport");
+            SkywardEnvironmentDirector environment = Object.FindObjectOfType<SkywardEnvironmentDirector>();
+            GameObject airport = environment != null ? environment.transform.parent.gameObject : null;
 
             Assert.IsNotNull(aircraft, "Session startup must create the trainer aircraft.");
             Assert.IsNotNull(aircraft.GetComponent<Rigidbody>(), "Trainer must have a Rigidbody.");
@@ -38,7 +40,8 @@ namespace Skyward.Tests
             Assert.IsNotNull(hud, "Session startup must create the flight HUD.");
             Assert.IsNotNull(cockpit, "Session startup must create cockpit instruments.");
             Assert.IsNotNull(mainCamera, "Session startup must create a tagged main camera.");
-            Assert.IsNotNull(airport, "Session startup must create the demo airport.");
+            Assert.IsNotNull(airport, "Session startup must create the selected airport environment.");
+            Assert.IsNotNull(environment, "Airport must include the dynamic environment director.");
             Assert.IsNotNull(GraphicsSettings.defaultRenderPipeline,
                 "The demo session must render through the configured Scriptable Render Pipeline.");
         }
@@ -47,7 +50,8 @@ namespace Skyward.Tests
         public IEnumerator TearDown()
         {
             Time.timeScale = 1f;
-            GameObject airport = GameObject.Find("SKYWARD Demo Airport");
+            SkywardEnvironmentDirector environment = Object.FindObjectOfType<SkywardEnvironmentDirector>();
+            GameObject airport = environment != null ? environment.transform.parent.gameObject : null;
             AircraftController aircraft = Object.FindObjectOfType<AircraftController>();
             FlightHud hud = Object.FindObjectOfType<FlightHud>();
             CockpitInstrumentPanel cockpit = Object.FindObjectOfType<CockpitInstrumentPanel>();
