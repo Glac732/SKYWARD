@@ -148,7 +148,7 @@ namespace Skyward.UI
 
         private void ShowHome()
         {
-            menuOpen = true; Time.timeScale = 1f; panel.SetActive(true); ClearButtons();
+            menuOpen = true; Time.timeScale = 0f; panel.SetActive(true); ClearButtons();
             title.text = "S K Y W A R D";
             body.text = "FLIGHT SIMULATOR\n\nChoose your aircraft, train your skills,\nand take to the skies.\n\n" + AircraftNames[aircraftIndex] + "\n" + MissionNames[missionIndex];
             AddButton("FLY NOW", 0, -115, CloseMenu, 310);
