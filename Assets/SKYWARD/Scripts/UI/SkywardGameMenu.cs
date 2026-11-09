@@ -50,6 +50,20 @@ namespace Skyward.UI
             if (aircraft == null) aircraft = FindObjectOfType<AircraftController>();
             if (status != null && aircraft != null)
             {
+                int lesson = PlayerPrefs.GetInt("SKYWARD_ACTIVE_LESSON", -1);
+                bool lessonComplete = lesson == 0
+                    ? aircraft.EngineRunning && !aircraft.ParkingBrake
+                    : lesson == 1
+                        ? aircraft.HasTakenOff
+                        : lesson == 2
+                            ? aircraft.MaximumAltitude >= 300f && aircraft.FlightSeconds >= 30f
+                            : lesson == 3 && aircraft.HasLanded && aircraft.TouchdownOnRunway;
+                if (lesson >= 0 && lessonComplete && PlayerPrefs.GetInt("SKYWARD_LESSON_DONE_" + lesson, 0) == 0)
+                {
+                    PlayerPrefs.SetInt("SKYWARD_LESSON_DONE_" + lesson, 1);
+                    PlayerPrefs.Save();
+                    status.text = "FLIGHT SCHOOL PASSED  •  " + LessonNames[lesson];
+                }
                 int mission = PlayerPrefs.GetInt("SKYWARD_ACTIVE_MISSION", 0);
                 bool complete = mission == 0
                     ? aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway
