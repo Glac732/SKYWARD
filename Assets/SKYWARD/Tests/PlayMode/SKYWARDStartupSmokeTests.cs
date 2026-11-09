@@ -39,7 +39,7 @@ namespace Skyward.Tests
             Assert.IsNotNull(cockpit, "Session startup must create cockpit instruments.");
             Assert.IsNotNull(mainCamera, "Session startup must create a tagged main camera.");
             Assert.IsNotNull(airport, "Session startup must create the demo airport.");
-            Assert.IsNotNull(GraphicsSettings.currentRenderPipeline,
+            Assert.IsNotNull(GraphicsSettings.defaultRenderPipeline,
                 "The demo session must render through the configured Scriptable Render Pipeline.");
         }
 
