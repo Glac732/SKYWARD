@@ -49,6 +49,7 @@ The following targeted changes were committed to `main`:
 11. **Build automation:** added explicit Unity Editor build entry points that generate the URP demo scene and build Windows x64 and Android ARM64 players, with build-result/error checks.
 12. **Unity CI pipeline:** added a GitHub Actions workflow to run EditMode/PlayMode tests, build both player targets, upload ZIP/APK artifacts and preserve test reports. It requires an activated Unity licence in the repository's `UNITY_LICENSE` Actions secret.
 13. **Startup smoke test:** added a PlayMode test for creation of the aircraft, three landing wheels, airport, main camera, HUD, cockpit instruments and configured render-pipeline asset.
+14. **Graphics diagnostics:** added an offscreen 960×540 render capture, non-blank frame check and 120-frame timing sample; the screenshot is saved into the Unity test artifacts when the runner has a graphics device.
 
 These are source edits. They have not yet been validated by importing/compiling/running the project inside Unity.
 
@@ -127,8 +128,8 @@ Current authored test source contains:
 
 - 11 aerodynamic EditMode tests.
 - 2 save-system EditMode tests.
-- 6 aircraft/ground/telemetry PlayMode tests, plus 1 full-session startup smoke test.
-- **20 authored test cases in total.**
+- 6 aircraft/ground/telemetry PlayMode tests, plus 1 full-session startup smoke test and 1 graphics/frame-timing smoke test.
+- **21 authored test cases in total.**
 
 **Execution status: NOT RUN.** Unity Editor and C# compiler tooling were unavailable in the development environment. Test names and assertions are not presented as passing evidence.
 
