@@ -49,7 +49,22 @@ namespace Skyward.UI
             }
             if (aircraft == null) aircraft = FindObjectOfType<AircraftController>();
             if (status != null && aircraft != null)
-                status.text = $"IAS {aircraft.AirspeedKnots:000} kt   ALT {aircraft.AltitudeMeters:0000} m   {aircraft.FlightPhase}";
+            {
+                int mission = PlayerPrefs.GetInt("SKYWARD_ACTIVE_MISSION", 0);
+                bool complete = mission == 0
+                    ? aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway
+                    : mission == 1
+                        ? aircraft.FlightSeconds >= 90f && aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway
+                        : aircraft.MaximumAltitude >= 800f && aircraft.FlightSeconds >= 180f;
+                if (complete && PlayerPrefs.GetInt("SKYWARD_MISSION_DONE_" + mission, 0) == 0)
+                {
+                    PlayerPrefs.SetInt("SKYWARD_MISSION_DONE_" + mission, 1);
+                    PlayerPrefs.Save();
+                    status.text = "MISSION COMPLETE  •  " + MissionNames[mission];
+                }
+                else
+                    status.text = $"IAS {aircraft.AirspeedKnots:000} kt   ALT {aircraft.AltitudeMeters:0000} m   {aircraft.FlightPhase}";
+            }
         }
 
         private void BuildCanvas()
