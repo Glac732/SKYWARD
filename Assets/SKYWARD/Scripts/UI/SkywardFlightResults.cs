@@ -76,6 +76,12 @@ namespace Skyward.UI
             MakeText(label, Vector2.zero, new Vector2(280, 54), 19, go.transform).fontStyle = FontStyle.Bold;
         }
 
+        public void ResetForNextFlight()
+        {
+            shown = false;
+            if (panel != null) panel.SetActive(false);
+        }
+
         private void Update()
         {
             if (shown || aircraft == null || !aircraft.HasLanded || panel == null) return;
