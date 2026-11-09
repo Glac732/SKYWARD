@@ -182,8 +182,22 @@ namespace Skyward.UI
             c.maxLiftCoefficient = aircraftIndex == 1 ? 1.55f : aircraftIndex == 2 ? 1.65f : 1.45f;
             c.stallAngleDeg = aircraftIndex == 2 ? 18f : 16f;
             aircraft.Reconfigure(c);
+            ApplyVisualPreset(aircraft.transform, aircraftIndex);
             ShowAircraft();
             body.text += "\n\nSELECTED ✓  Return to FLY NOW to use this aircraft.";
+        }
+
+        private void ApplyVisualPreset(Transform root, int preset)
+        {
+            Transform wing = root.Find("Left wing");
+            Transform tail = root.Find("Tailplane");
+            Transform fuselage = root.Find("Fuselage");
+            if (wing != null) wing.localScale = new Vector3(preset == 1 ? 11.8f : preset == 2 ? 9.4f : 10.9f, 0.12f, preset == 2 ? 1.25f : 1.45f);
+            if (tail != null) tail.localScale = new Vector3(preset == 2 ? 3.1f : 3.6f, 0.1f, 0.8f);
+            Color livery = preset == 1 ? new Color(0.88f, 0.9f, 0.92f) : preset == 2 ? new Color(0.92f, 0.22f, 0.12f) : new Color(0.82f, 0.84f, 0.83f);
+            if (fuselage != null && fuselage.GetComponent<Renderer>() != null) fuselage.GetComponent<Renderer>().material.color = livery;
+            if (wing != null && wing.GetComponent<Renderer>() != null) wing.GetComponent<Renderer>().material.color = livery;
+            if (tail != null && tail.GetComponent<Renderer>() != null) tail.GetComponent<Renderer>().material.color = livery;
         }
 
         private void ShowLessons()
@@ -237,7 +251,7 @@ namespace Skyward.UI
             AddButton("VOLUME −", -160, -220, () => { AudioListener.volume = Mathf.Clamp01(AudioListener.volume - 0.1f); ShowSettings(); });
             AddButton("VOLUME +", 160, -220, () => { AudioListener.volume = Mathf.Clamp01(AudioListener.volume + 0.1f); ShowSettings(); });
             AddButton("QUALITY", -160, -285, () => { QualitySettings.IncreaseLevel(false); ShowSettings(); });
-            AddButton("SAVE & BACK", 160, -285, () => { PlayerPrefs.SetFloat("SKYWARD_VOLUME", AudioListener.volume); PlayerPrefs.Save(); ShowHome(); });
+            AddButton("SAVE & BACK", 160, -285, () => { SkywardSettings.Data.masterVolume = AudioListener.volume; SkywardSettings.Save(); ShowHome(); });
         }
 
         private void ApplyWeather()
