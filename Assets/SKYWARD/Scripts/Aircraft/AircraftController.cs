@@ -304,6 +304,18 @@ namespace Skyward.Aircraft
             visual.rotation = rotation * Quaternion.Euler(0f, 0f, 90f);
         }
 
+        public void ResetFlightState()
+        {
+            hasLeftGround = false;
+            hasTouchedDown = false;
+            touchdownOnRunway = false;
+            touchdownVerticalSpeed = 0f;
+            maximumAltitude = transform.position.y;
+            maximumAirspeed = 0f;
+            IsGrounded = false;
+            IsOnRunway = false;
+        }
+
         public void SetThrottle(float value) => throttle = Mathf.Clamp01(value);
         public void SetControls(Vector3 value)
         {
