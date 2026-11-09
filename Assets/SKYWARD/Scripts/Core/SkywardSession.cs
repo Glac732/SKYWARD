@@ -57,6 +57,7 @@ namespace Skyward.Core
 
             CockpitInstrumentPanel cockpit = aircraft.AddComponent<CockpitInstrumentPanel>();
             cockpit.SetAircraft(controller);
+            SkywardGameMenu.Create(controller);
         }
 
         private void Update()
