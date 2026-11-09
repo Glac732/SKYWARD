@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using Skyward.Aircraft;
 using Skyward.Core;
 using Skyward.CameraSystem;
@@ -85,6 +86,11 @@ namespace Skyward.UI
 
         private void BuildCanvas()
         {
+            if (FindObjectOfType<EventSystem>() == null)
+            {
+                GameObject eventSystem = new GameObject("SKYWARD Event System", typeof(EventSystem), typeof(StandaloneInputModule));
+                eventSystem.transform.SetParent(transform, false);
+            }
             GameObject canvasObject = new GameObject("Front End Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             canvasObject.transform.SetParent(transform, false);
             canvas = canvasObject.GetComponent<Canvas>();
