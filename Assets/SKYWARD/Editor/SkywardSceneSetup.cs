@@ -57,6 +57,18 @@ namespace Skyward.Editor
             Debug.Log("SKYWARD demo scene created. Open Assets/Scenes/SKYWARD_Demo.unity and press Play.");
         }
 
+        [InitializeOnLoadMethod]
+        private static void EnsureRenderingOnEditorLoad()
+        {
+            try
+            {
+                EnsureUniversalRenderPipeline();
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError("SKYWARD: Could not configure the Universal Render Pipeline on editor startup. " + exception);
+            }
+        }
         private static void EnsureUniversalRenderPipeline()
         {
             const string settingsFolder = "Assets/SKYWARD/Settings";
