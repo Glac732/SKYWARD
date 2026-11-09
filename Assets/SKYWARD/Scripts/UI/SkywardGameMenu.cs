@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using Skyward.Aircraft;
 using Skyward.Core;
 using Skyward.CameraSystem;
+using Skyward.Environment;
 
 namespace Skyward.UI
 {
@@ -23,6 +24,9 @@ namespace Skyward.UI
         private bool menuOpen = true;
         private float wind;
         private int weatherIndex;
+        private int airportIndex;
+        private SkywardEnvironmentDirector environment;
+        private static readonly string[] AirportLabels = { "AL KHOR • DESERT", "COASTAL BAY • SHORELINE", "HIGHLAND • MOUNTAINS" };
         private static readonly string[] AircraftNames = { "SKYWARD 152 • TRAINER", "SKYWARD  touring • TOURER", "SKYWARD AERO • AEROBATIC" };
         private static readonly string[] MissionNames = { "FIRST FLIGHT", "CIRCUIT & LANDING", "CROSS-COUNTRY" };
         private static readonly string[] LessonNames = { "01  PREFLIGHT & CONTROLS", "02  TAKE-OFF", "03  CLIMB & LEVEL FLIGHT", "04  APPROACH & LANDING" };
@@ -37,6 +41,9 @@ namespace Skyward.UI
 
         private void Start()
         {
+            environment = FindObjectOfType<SkywardEnvironmentDirector>();
+            airportIndex = PlayerPrefs.GetInt("SKYWARD_ACTIVE_AIRPORT", 0);
+            weatherIndex = PlayerPrefs.GetInt("SKYWARD_WEATHER", 0);
             BuildCanvas();
             ShowHome();
         }
@@ -162,6 +169,7 @@ namespace Skyward.UI
             AddButton("FLIGHT SCHOOL", 160, -190, ShowLessons);
             AddButton("MISSIONS", -160, -265, ShowMissions);
             AddButton("WEATHER & SETTINGS", 160, -265, ShowSettings);
+            AddButton("AIRPORT SELECT", 0, -330, ShowAirports, 330);
             status.text = "ESC  MENU / RESUME";
         }
 
@@ -261,6 +269,28 @@ namespace Skyward.UI
             AddButton("BACK", 0, -305, ShowHome);
         }
 
+        private void ShowAirports()
+        {
+            ClearButtons(); title.text = "WORLD AIRPORTS";
+            string[] descriptions = {
+                "AL KHOR • DESERT\nWarm arid terrain, regional hangars and broad runway surroundings.",
+                "COASTAL BAY • SHORELINE\nA coastal airfield with water, promenade and sea-side approach scenery.",
+                "HIGHLAND • MOUNTAINS\nElevated terrain, mountain ridges and a challenging visual environment."
+            };
+            body.text = AirportLabels[airportIndex] + "\n\n" + descriptions[airportIndex] +
+                "\n\nSelected airport is loaded on the next new session.";
+            AddButton("◀ PREVIOUS", -160, -165, () => { airportIndex = (airportIndex + 2) % 3; ShowAirports(); });
+            AddButton("NEXT ▶", 160, -165, () => { airportIndex = (airportIndex + 1) % 3; ShowAirports(); });
+            AddButton("SET DEPARTURE AIRPORT", 0, -240, () => {
+                PlayerPrefs.SetInt("SKYWARD_ACTIVE_AIRPORT", airportIndex);
+                SkywardSettings.Data.selectedAirportId = "skyward-airport-" + airportIndex;
+                SkywardSettings.Save();
+                ShowAirports();
+                body.text += "\n\nSAVED ✓ Restart the session to load this airport.";
+            }, 380);
+            AddButton("BACK", 0, -305, ShowHome);
+        }
+
         private void ShowSettings()
         {
             ClearButtons(); title.text = "FLIGHT CONDITIONS";
@@ -278,13 +308,11 @@ namespace Skyward.UI
 
         private void ApplyWeather()
         {
-            RenderSettings.fog = weatherIndex == 3;
-            RenderSettings.fogDensity = weatherIndex == 3 ? 0.0015f : 0.00035f;
-            RenderSettings.ambientIntensity = weatherIndex == 3 ? 0.65f : 1f;
-            if (weatherIndex == 3) RenderSettings.ambientLight = new Color(0.35f, 0.38f, 0.52f);
-            else RenderSettings.ambientLight = new Color(0.72f, 0.78f, 0.86f);
-            wind = weatherIndex == 1 ? 8f : weatherIndex == 2 ? 12f : 0f;
-            if (aircraft != null) aircraft.SetWind(wind, weatherIndex == 2 ? 90f : 240f);
+            PlayerPrefs.SetInt("SKYWARD_WEATHER", weatherIndex);
+            PlayerPrefs.Save();
+            if (environment == null) environment = FindObjectOfType<SkywardEnvironmentDirector>();
+            if (environment != null) environment.ApplyWeather(weatherIndex, aircraft);
+            else if (aircraft != null) aircraft.SetWind(weatherIndex == 1 ? 8f : weatherIndex == 2 ? 12f : 0f, weatherIndex == 2 ? 90f : 240f);
         }
     }
 }
