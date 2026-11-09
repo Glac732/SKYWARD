@@ -9,8 +9,8 @@ namespace Skyward.Environment
         public static GameObject Build()
         {
             GameObject aircraft = new GameObject("SKYWARD Trainer Aircraft");
-            CreatePart("Fuselage", PrimitiveType.Capsule, new Vector3(0f, 0f, 0f), new Vector3(0.55f, 0.62f, 4.5f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform, new Vector3(90f, 0f, 0f));
-            CreatePart("Left wing", PrimitiveType.Cube, new Vector3(-0.05f, 0f, 0f), new Vector3(10.9f, 0.12f, 1.45f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
+            CreateFuselage(aircraft.transform);
+            CreateWing(aircraft.transform);
             CreatePart("Tailplane", PrimitiveType.Cube, new Vector3(0f, 0.18f, -3.75f), new Vector3(3.6f, 0.1f, 0.8f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Fin", PrimitiveType.Cube, new Vector3(0f, 0.8f, -3.65f), new Vector3(0.12f, 1.3f, 0.9f), new Color(0.82f, 0.84f, 0.83f), aircraft.transform);
             CreatePart("Nose", PrimitiveType.Sphere, new Vector3(0f, 0f, 2.15f), new Vector3(0.52f, 0.52f, 0.65f), new Color(0.18f, 0.22f, 0.25f), aircraft.transform);
@@ -41,6 +41,75 @@ namespace Skyward.Environment
             CreatePart("Left flap", PrimitiveType.Cube, new Vector3(-1.8f, -0.09f, -0.62f), new Vector3(3.0f, 0.045f, 0.34f), new Color(0.72f, 0.75f, 0.75f), aircraft.transform);
             CreatePart("Right flap", PrimitiveType.Cube, new Vector3(1.8f, -0.09f, -0.62f), new Vector3(3.0f, 0.045f, 0.34f), new Color(0.72f, 0.75f, 0.75f), aircraft.transform);
             return aircraft;
+        }
+
+        private static void CreateFuselage(Transform parent)
+        {
+            GameObject go = new GameObject("Fuselage");
+            go.transform.SetParent(parent, false);
+            Mesh mesh = new Mesh { name = "Tapered trainer fuselage" };
+            const int sides = 16;
+            float[] z = { -3.9f, -2.9f, -1.2f, 0.5f, 1.65f, 2.45f };
+            float[] rx = { 0.10f, 0.19f, 0.28f, 0.31f, 0.25f, 0.11f };
+            float[] ry = { 0.11f, 0.22f, 0.30f, 0.32f, 0.25f, 0.12f };
+            Vector3[] vertices = new Vector3[z.Length * sides];
+            for (int ring = 0; ring < z.Length; ring++)
+                for (int side = 0; side < sides; side++)
+                {
+                    float a = side * Mathf.PI * 2f / sides;
+                    vertices[ring * sides + side] = new Vector3(Mathf.Cos(a) * rx[ring], Mathf.Sin(a) * ry[ring], z[ring]);
+                }
+            int[] triangles = new int[(z.Length - 1) * sides * 6];
+            int t = 0;
+            for (int ring = 0; ring < z.Length - 1; ring++)
+                for (int side = 0; side < sides; side++)
+                {
+                    int a = ring * sides + side;
+                    int b = ring * sides + (side + 1) % sides;
+                    int d = (ring + 1) * sides + side;
+                    int e = (ring + 1) * sides + (side + 1) % sides;
+                    triangles[t++] = a; triangles[t++] = d; triangles[t++] = b;
+                    triangles[t++] = b; triangles[t++] = d; triangles[t++] = e;
+                }
+            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterial = GetSharedMaterial(new Color(0.82f, 0.84f, 0.83f));
+        }
+
+        private static void CreateWing(Transform parent)
+        {
+            GameObject go = new GameObject("Left wing");
+            go.transform.SetParent(parent, false);
+            Vector3[] outline =
+            {
+                new Vector3(-5.45f, 0f, 0.12f), new Vector3(-5.35f, 0f, -0.95f),
+                new Vector3(-0.55f, 0f, -1.05f), new Vector3(0.55f, 0f, -1.05f),
+                new Vector3(5.35f, 0f, -0.95f), new Vector3(5.45f, 0f, 0.12f),
+                new Vector3(0.55f, 0f, 0.48f), new Vector3(-0.55f, 0f, 0.48f)
+            };
+            Vector3[] vertices = new Vector3[outline.Length * 2];
+            for (int i = 0; i < outline.Length; i++)
+            {
+                vertices[i] = outline[i] + Vector3.up * 0.075f;
+                vertices[i + outline.Length] = outline[i] - Vector3.up * 0.075f;
+            }
+            int[] triangles = new int[(outline.Length - 2) * 6 + outline.Length * 6];
+            int t = 0;
+            for (int i = 1; i < outline.Length - 1; i++)
+            {
+                triangles[t++] = 0; triangles[t++] = i; triangles[t++] = i + 1;
+                triangles[t++] = outline.Length; triangles[t++] = outline.Length + i + 1; triangles[t++] = outline.Length + i;
+            }
+            for (int i = 0; i < outline.Length; i++)
+            {
+                int n = (i + 1) % outline.Length;
+                triangles[t++] = i; triangles[t++] = n; triangles[t++] = i + outline.Length;
+                triangles[t++] = n; triangles[t++] = n + outline.Length; triangles[t++] = i + outline.Length;
+            }
+            Mesh mesh = new Mesh { name = "Swept tapered wing" };
+            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterial = GetSharedMaterial(new Color(0.82f, 0.84f, 0.83f));
         }
 
         private static GameObject CreatePart(string name, PrimitiveType type, Vector3 localPosition, Vector3 localScale, Color color, Transform parent, Vector3 localEuler = default)
