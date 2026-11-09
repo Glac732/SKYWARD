@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 using Skyward.Aircraft;
 using Skyward.Core;
+using Skyward.Environment;
 
 namespace Skyward.Tests
 {
@@ -100,7 +101,8 @@ namespace Skyward.Tests
             }
             if (capturedFrame != null) Object.Destroy(capturedFrame);
 
-            GameObject airport = GameObject.Find("SKYWARD Demo Airport");
+            SkywardEnvironmentDirector environment = Object.FindObjectOfType<SkywardEnvironmentDirector>();
+            GameObject airport = environment != null ? environment.transform.parent.gameObject : null;
             AircraftController aircraft = Object.FindObjectOfType<AircraftController>();
             Camera camera = Camera.main;
             if (airport != null) Object.Destroy(airport);
