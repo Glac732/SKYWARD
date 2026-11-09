@@ -102,6 +102,22 @@ namespace Skyward.Aircraft
             enabled = true;
         }
 
+        public void Reconfigure(AircraftConfig aircraftConfig)
+        {
+            if (aircraftConfig == null || body == null) return;
+            config = aircraftConfig;
+            body.mass = config.massKg;
+            body.inertiaTensor = config.inertiaTensor;
+            fuelKg = Mathf.Clamp(config.fuelCapacityKg, 0f, config.fuelCapacityKg);
+            if (leftWheel != null) Destroy(leftWheel.gameObject);
+            if (rightWheel != null) Destroy(rightWheel.gameObject);
+            if (noseWheel != null) Destroy(noseWheel.gameObject);
+            leftWheel = rightWheel = noseWheel = null;
+            BuildLandingGear();
+            CacheVisuals();
+            SetWheelCollidersEnabled(gearDown);
+        }
+
         private void BuildLandingGear()
         {
             leftWheel = CreateWheel("Left main wheel collider", leftGearPosition, false);
