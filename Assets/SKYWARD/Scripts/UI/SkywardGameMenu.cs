@@ -50,6 +50,7 @@ namespace Skyward.UI
             if (aircraft == null) aircraft = FindObjectOfType<AircraftController>();
             if (status != null && aircraft != null)
             {
+                bool lessonPassedThisFrame = false;
                 int lesson = PlayerPrefs.GetInt("SKYWARD_ACTIVE_LESSON", -1);
                 bool lessonComplete = lesson == 0
                     ? aircraft.EngineRunning && !aircraft.ParkingBrake
@@ -63,6 +64,7 @@ namespace Skyward.UI
                     PlayerPrefs.SetInt("SKYWARD_LESSON_DONE_" + lesson, 1);
                     PlayerPrefs.Save();
                     status.text = "FLIGHT SCHOOL PASSED  •  " + LessonNames[lesson];
+                    lessonPassedThisFrame = true;
                 }
                 int mission = PlayerPrefs.GetInt("SKYWARD_ACTIVE_MISSION", 0);
                 bool complete = mission == 0
@@ -76,7 +78,7 @@ namespace Skyward.UI
                     PlayerPrefs.Save();
                     status.text = "MISSION COMPLETE  •  " + MissionNames[mission];
                 }
-                else
+                else if (!lessonPassedThisFrame)
                     status.text = $"IAS {aircraft.AirspeedKnots:000} kt   ALT {aircraft.AltitudeMeters:0000} m   {aircraft.FlightPhase}";
             }
         }
