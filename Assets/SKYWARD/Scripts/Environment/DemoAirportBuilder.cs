@@ -6,10 +6,18 @@ namespace Skyward.Environment
     public static class DemoAirportBuilder
     {
         private static readonly Dictionary<Color, Material> MaterialCache = new Dictionary<Color, Material>();
-        public static GameObject Build()
+        public static readonly string[] AirportNames = { "AL KHOR INTERNATIONAL", "COASTAL BAY AIRFIELD", "HIGHLAND REGIONAL" };
+        public static GameObject Build() => Build(0);
+
+        public static GameObject Build(int airportPreset)
         {
-            GameObject root = new GameObject("SKYWARD Demo Airport");
-            CreatePrimitive("Terrain", PrimitiveType.Cube, new Vector3(0f, -1.1f, 20f), new Vector3(1800f, 1f, 2200f), new Color(0.22f, 0.34f, 0.20f), root.transform);
+            airportPreset = Mathf.Clamp(airportPreset, 0, 2);
+            Color terrainColor = airportPreset == 0 ? new Color(0.22f, 0.34f, 0.20f) :
+                airportPreset == 1 ? new Color(0.20f, 0.34f, 0.31f) : new Color(0.30f, 0.34f, 0.30f);
+            Color buildingColor = airportPreset == 0 ? new Color(0.42f, 0.46f, 0.49f) :
+                airportPreset == 1 ? new Color(0.76f, 0.79f, 0.77f) : new Color(0.40f, 0.42f, 0.39f);
+            GameObject root = new GameObject("SKYWARD Airport • " + AirportNames[airportPreset]);
+            CreatePrimitive("Terrain", PrimitiveType.Cube, new Vector3(0f, -1.1f, 20f), new Vector3(1800f, 1f, 2200f), terrainColor, root.transform);
             CreatePrimitive("Runway", PrimitiveType.Cube, new Vector3(0f, -0.48f, 0f), new Vector3(32f, 0.12f, 1800f), new Color(0.12f, 0.13f, 0.14f), root.transform);
             CreatePrimitive("Runway centerline", PrimitiveType.Cube, new Vector3(0f, -0.405f, 0f), new Vector3(0.35f, 0.02f, 1500f), Color.white, root.transform);
             CreatePrimitive("Left runway edge", PrimitiveType.Cube, new Vector3(-15.2f, -0.405f, 0f), new Vector3(0.35f, 0.02f, 1780f), Color.white, root.transform);
@@ -41,9 +49,27 @@ namespace Skyward.Environment
             for (int z = -800; z <= 800; z += 100)
                 CreatePrimitive("Centerline dash", PrimitiveType.Cube, new Vector3(0f, -0.39f, z), new Vector3(0.65f, 0.025f, 24f), Color.white, root.transform);
 
-            CreatePrimitive("Hangar", PrimitiveType.Cube, new Vector3(70f, 8f, -100f), new Vector3(70f, 16f, 55f), new Color(0.42f, 0.46f, 0.49f), root.transform);
-            CreatePrimitive("Tower", PrimitiveType.Cube, new Vector3(-90f, 18f, -120f), new Vector3(12f, 36f, 12f), new Color(0.65f, 0.68f, 0.69f), root.transform);
-            CreatePrimitive("Tower cab", PrimitiveType.Cube, new Vector3(-90f, 37f, -120f), new Vector3(18f, 4f, 18f), new Color(0.2f, 0.32f, 0.38f), root.transform);
+            CreatePrimitive("Terminal hangar", PrimitiveType.Cube, new Vector3(70f, 8f, -100f), new Vector3(70f, 16f, 55f), buildingColor, root.transform);
+            CreatePrimitive("Control tower", PrimitiveType.Cube, new Vector3(-90f, 18f, -120f), new Vector3(12f, 36f, 12f), buildingColor, root.transform);
+            CreatePrimitive("Tower cab glazing", PrimitiveType.Cube, new Vector3(-90f, 37f, -120f), new Vector3(18f, 4f, 18f), new Color(0.2f, 0.32f, 0.38f), root.transform);
+            CreatePrimitive("Terminal annex", PrimitiveType.Cube, new Vector3(135f, 4f, -125f), new Vector3(45f, 8f, 38f), buildingColor, root.transform);
+            if (airportPreset == 1)
+            {
+                for (int i = 0; i < 8; i++)
+                    CreatePrimitive("Coastal water", PrimitiveType.Cube, new Vector3(440f + i * 90f, -0.62f, 300f), new Vector3(95f, 0.08f, 1800f), new Color(0.08f, 0.28f, 0.38f), root.transform);
+                CreatePrimitive("Coastal promenade", PrimitiveType.Cube, new Vector3(420f, 0.2f, 0f), new Vector3(12f, 0.8f, 1700f), new Color(0.68f, 0.63f, 0.48f), root.transform);
+            }
+            else if (airportPreset == 2)
+            {
+                for (int i = 0; i < 22; i++)
+                {
+                    float x = (i % 2 == 0 ? -1f : 1f) * Random.Range(250f, 520f);
+                    float z = Random.Range(-1000f, 1000f);
+                    CreatePrimitive("Highland ridge", PrimitiveType.Sphere, new Vector3(x, Random.Range(60f, 140f), z),
+                        new Vector3(Random.Range(90f, 170f), Random.Range(110f, 220f), Random.Range(100f, 240f)),
+                        new Color(0.32f, 0.35f, 0.33f), root.transform);
+                }
+            }
 
             for (int i = 0; i < 14; i++)
             {
@@ -53,6 +79,7 @@ namespace Skyward.Environment
                     new Vector3(Random.Range(45f, 90f), Random.Range(18f, 55f), Random.Range(60f, 130f)),
                     new Color(0.25f, 0.36f, 0.23f), root.transform);
             }
+            SkywardEnvironmentDirector.Create(root.transform, airportPreset);
             return root;
         }
 
