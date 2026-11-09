@@ -64,6 +64,7 @@ jobs:
         with:
           unityVersion: 6000.3.0f1
           testMode: all
+          coverageEnabled: false
           artifactsPath: artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: SKYWARD Unity Test Results
