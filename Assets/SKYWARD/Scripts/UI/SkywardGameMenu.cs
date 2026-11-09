@@ -238,6 +238,7 @@ namespace Skyward.UI
 
         private void ApplyVisualPreset(Transform root, int preset)
         {
+            AircraftVariantBuilder.Apply(root, preset);
             Transform wing = root.Find("Left wing");
             Transform tail = root.Find("Tailplane");
             Transform fuselage = root.Find("Fuselage");
