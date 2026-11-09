@@ -42,6 +42,9 @@ namespace Skyward.Aircraft
         private bool hasTouchedDown;
         private bool touchdownOnRunway;
         private float touchdownVerticalSpeed;
+        private float touchdownAirspeedKnots;
+        private float touchdownBankDegrees;
+        private float touchdownPitchDegrees;
 
         public AircraftConfig Config => config;
         public Rigidbody Body => body;
@@ -66,6 +69,9 @@ namespace Skyward.Aircraft
         public bool TouchdownOnRunway => touchdownOnRunway;
         public bool IsOnRunway { get; private set; }
         public float TouchdownVerticalSpeed => touchdownVerticalSpeed;
+        public float TouchdownAirspeedKnots => touchdownAirspeedKnots;
+        public float TouchdownBankDegrees => touchdownBankDegrees;
+        public float TouchdownPitchDegrees => touchdownPitchDegrees;
         public float MaximumAltitude => maximumAltitude;
         public float MaximumAirspeed => maximumAirspeed;
         public float PitchDegrees => Mathf.Asin(Mathf.Clamp(transform.forward.y, -1f, 1f)) * Mathf.Rad2Deg;
@@ -236,6 +242,9 @@ namespace Skyward.Aircraft
                 hasTouchedDown = true;
                 touchdownOnRunway = IsOnRunway;
                 touchdownVerticalSpeed = body.velocity.y;
+                touchdownAirspeedKnots = lastAero.indicatedAirspeed * 1.943844f;
+                touchdownBankDegrees = BankDegrees;
+                touchdownPitchDegrees = PitchDegrees;
             }
             maximumAltitude = Mathf.Max(maximumAltitude, transform.position.y);
             maximumAirspeed = Mathf.Max(maximumAirspeed, lastAero.airspeed);
@@ -310,6 +319,9 @@ namespace Skyward.Aircraft
             hasTouchedDown = false;
             touchdownOnRunway = false;
             touchdownVerticalSpeed = 0f;
+            touchdownAirspeedKnots = 0f;
+            touchdownBankDegrees = 0f;
+            touchdownPitchDegrees = 0f;
             maximumAltitude = transform.position.y;
             maximumAirspeed = 0f;
             IsGrounded = false;
