@@ -337,14 +337,17 @@ namespace Skyward.UI
                 SkywardSettings.Save();
                 Transform oldAirport = environment != null ? environment.transform.parent : null;
                 if (oldAirport != null) Destroy(oldAirport.gameObject);
-                DemoAirportBuilder.Build(airportIndex);
-                environment = FindObjectOfType<SkywardEnvironmentDirector>();
+                GameObject newAirport = DemoAirportBuilder.Build(airportIndex);
+                environment = newAirport.GetComponentInChildren<SkywardEnvironmentDirector>();
+                if (environment != null) environment.ApplyWeather(weatherIndex, aircraft);
                 if (aircraft != null)
                 {
                     aircraft.transform.position = new Vector3(0f, 0.58f, -620f);
                     aircraft.transform.rotation = Quaternion.identity;
                     if (aircraft.Body != null) { aircraft.Body.velocity = Vector3.zero; aircraft.Body.angularVelocity = Vector3.zero; }
                     aircraft.ResetFlightState();
+                    SkywardFlightResults results = FindObjectOfType<SkywardFlightResults>();
+                    if (results != null) results.ResetForNextFlight();
                     flightRecorded = false;
                 }
                 ShowAirports();
