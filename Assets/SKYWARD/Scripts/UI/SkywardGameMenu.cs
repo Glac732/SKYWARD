@@ -31,7 +31,7 @@ namespace Skyward.UI
         private static readonly string[] AircraftNames = { "SKYWARD 152 • TRAINER", "SKYWARD  touring • TOURER", "SKYWARD AERO • AEROBATIC" };
         private static readonly string[] MissionNames = { "FIRST FLIGHT", "CIRCUIT & LANDING", "CROSS-COUNTRY", "HIGH ALTITUDE", "SOFT TOUCHDOWN", "WINDY APPROACH" };
         private static readonly string[] LessonNames = { "01  PREFLIGHT & CONTROLS", "02  TAKE-OFF", "03  CLIMB & LEVEL FLIGHT", "04  APPROACH & LANDING" };
-        private static readonly string[] WeatherNames = { "CLEAR • CALM", "BREEZY • 8 m/s", "CROSSWIND • 12 m/s", "DUSK • CALM" };
+        private static readonly string[] WeatherNames = { "CLEAR • CALM", "BREEZY • 8 m/s", "CROSSWIND • 12 m/s", "DUSK • FOG", "RAIN • LOW VISIBILITY" };
 
         public static void Create(AircraftController target)
         {
@@ -87,7 +87,8 @@ namespace Skyward.UI
                                 ? aircraft.MaximumAltitude >= 1500f
                                 : mission == 4
                                     ? aircraft.HasLanded && aircraft.TouchdownOnRunway && aircraft.TouchdownVerticalSpeed > -2.0f
-                                    : aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway && aircraft.TouchdownVerticalSpeed > -3.0f;
+                                    : aircraft.HasTakenOff && aircraft.HasLanded && aircraft.TouchdownOnRunway &&
+                                      aircraft.TouchdownVerticalSpeed > -3.0f && PlayerPrefs.GetInt("SKYWARD_WEATHER", 0) == 2;
                 if (complete && PlayerPrefs.GetInt("SKYWARD_MISSION_DONE_" + mission, 0) == 0)
                 {
                     PlayerPrefs.SetInt("SKYWARD_MISSION_DONE_" + mission, 1);
@@ -284,7 +285,6 @@ namespace Skyward.UI
             var profile = SkywardSettings.Data;
             profile.completedFlights += 1;
             if (aircraft.TouchdownOnRunway) profile.successfulLandings += 1;
-            profile.totalFlightSeconds += Mathf.Max(0f, aircraft.FlightSeconds);
             SkywardSettings.Save();
             if (profile.completedFlights >= 1) PlayerPrefs.SetInt("SKYWARD_ACH_FIRST_LANDING", 1);
             if (profile.successfulLandings >= 5) PlayerPrefs.SetInt("SKYWARD_ACH_FIVE_LANDINGS", 1);
@@ -323,8 +323,19 @@ namespace Skyward.UI
                 PlayerPrefs.SetInt("SKYWARD_ACTIVE_AIRPORT", airportIndex);
                 SkywardSettings.Data.selectedAirportId = "skyward-airport-" + airportIndex;
                 SkywardSettings.Save();
+                Transform oldAirport = environment != null ? environment.transform.parent : null;
+                if (oldAirport != null) Destroy(oldAirport.gameObject);
+                DemoAirportBuilder.Build(airportIndex);
+                environment = FindObjectOfType<SkywardEnvironmentDirector>();
+                if (aircraft != null)
+                {
+                    aircraft.transform.position = new Vector3(0f, 0.58f, -620f);
+                    aircraft.transform.rotation = Quaternion.identity;
+                    if (aircraft.Body != null) { aircraft.Body.velocity = Vector3.zero; aircraft.Body.angularVelocity = Vector3.zero; }
+                    flightRecorded = false;
+                }
                 ShowAirports();
-                body.text += "\n\nSAVED ✓ Restart the session to load this airport.";
+                body.text += "\n\nAIRPORT LOADED ✓";
             }, 380);
             AddButton("BACK", 0, -305, ShowHome);
         }
@@ -336,8 +347,8 @@ namespace Skyward.UI
                 "\n\nMaster volume: " + AudioListener.volume.ToString("0.0") +
                 "\n\nGraphics quality: " + QualitySettings.names[QualitySettings.GetQualityLevel()] +
                 "\n\nChoose a weather profile or adjust audio and quality below.";
-            AddButton("WEATHER ◀", -160, -155, () => { weatherIndex = (weatherIndex + 3) % 4; ApplyWeather(); ShowSettings(); });
-            AddButton("WEATHER ▶", 160, -155, () => { weatherIndex = (weatherIndex + 1) % 4; ApplyWeather(); ShowSettings(); });
+            AddButton("WEATHER ◀", -160, -155, () => { weatherIndex = (weatherIndex + 4) % 5; ApplyWeather(); ShowSettings(); });
+            AddButton("WEATHER ▶", 160, -155, () => { weatherIndex = (weatherIndex + 1) % 5; ApplyWeather(); ShowSettings(); });
             AddButton("VOLUME −", -160, -220, () => { AudioListener.volume = Mathf.Clamp01(AudioListener.volume - 0.1f); ShowSettings(); });
             AddButton("VOLUME +", 160, -220, () => { AudioListener.volume = Mathf.Clamp01(AudioListener.volume + 0.1f); ShowSettings(); });
             AddButton("QUALITY", -160, -285, () => { QualitySettings.IncreaseLevel(false); ShowSettings(); });
