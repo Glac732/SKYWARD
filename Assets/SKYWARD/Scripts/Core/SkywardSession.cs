@@ -5,7 +5,6 @@ using Skyward.UI;
 using Skyward.Environment;
 using Skyward.Persistence;
 using Skyward.Audio;
-using Skyward.Environment;
 
 namespace Skyward.Core
 {
