@@ -80,7 +80,7 @@ The following table follows the master prompt's 48-section structure. “Partial
 | 14. Airport system | Functional airport catalog and selection | **Partial** — three selectable procedural airport variants sharing a common runway layout; no geographically accurate airport catalog |
 | 15. Weather/atmosphere | Visual and aerodynamic weather presets, rain/fog/cloud/wind | **Partial** — menu presets, wind, cloud clusters, fog and rain particles; not a full meteorological simulation |
 | 16. Lighting/sky | Realistic sky, clouds, atmospheric effects, day/night | **Partial** — procedural cloud clusters, directional sun, ambient sky tint and fog; no time-of-day cycle or production sky |
-| 17. Aircraft animations | State-driven surfaces, flaps, gear, controls, lights and doors | **Partial** — propeller/wheels are basic; control surfaces, lights/doors and detailed animation absent |
+| 17. Aircraft animations | State-driven surfaces, flaps, gear, controls, lights and doors | **Partial** — propeller/wheels plus input-driven flaps, ailerons, elevators and rudder; no detailed gear/door/light animation |
 | 18. Sound | Spatial aircraft/environmental sound and volume groups | **Partial** — procedural throttle-responsive engine loop and wind/weather ambience; no authored spatial sound library or full volume groups |
 | 19. Game modes | Free flight, training, landing challenge, time trial, career | **Partial** — free flight, four lessons, six missions and basic career page; no full time-trial/career progression |
 | 20. Missions/objectives | Real objective state machine, progress, reward, failure | **Partial** — six telemetry-based mission completion checks; no full objective sequencing, rewards or failure/results flow |
@@ -102,7 +102,7 @@ The following table follows the master prompt's 48-section structure. “Partial
 | 36. Downloadable release | Windows/macOS/Linux/Android/iOS distributables and install docs | **Not met** — no player binaries, installers or APK/AAB |
 | 37. Accessibility/localisation | Language and unit options, scalable/accessibility UI | **Not implemented** |
 | 38. First-time experience | Interactive onboarding and tutorial stages | **Not implemented** |
-| 39. Flight results/statistics | Honest flight summary from accumulated simulation data | **Partial** — some telemetry/maxima exist; no complete result screen or robust record capture |
+| 39. Flight results/statistics | Honest flight summary from accumulated simulation data | **Partial** — touchdown telemetry, landing score/debrief and basic career totals; no full flight report or export |
 | 40. Achievements | Data-validated unlocks and rewards | **Partial** — local first landing, five landings, soft touchdown and ten-hour flags; no reward/unlock economy |
 | 41. Quality assurance | Editor tests, full gameplay/device/build/performance matrix | **Partial** — 22 test cases authored but unrun; no gameplay/device test evidence |
 | 42. Anti-placeholder | Missing systems honestly disabled and documented | **Partial** — README/report disclose prototype; basic primitives and limited prototype UI remain |
