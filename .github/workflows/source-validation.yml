@@ -29,6 +29,7 @@ jobs:
               json.loads(path.read_text())
           required = [
               'Assets/SKYWARD/Editor/SkywardSceneSetup.cs',
+              'Assets/SKYWARD/Editor/SkywardBuildAutomation.cs',
               'Assets/SKYWARD/Scripts/Aircraft/AircraftController.cs',
               'Assets/SKYWARD/Scripts/Aircraft/AerodynamicModel.cs',
               'Assets/SKYWARD/Scripts/Environment/DemoAirportBuilder.cs',
@@ -37,6 +38,7 @@ jobs:
               'Assets/SKYWARD/Scripts/UI/CockpitInstrumentPanel.cs',
               'Assets/SKYWARD/Tests/EditMode/AerodynamicModelTests.cs',
               'Assets/SKYWARD/Tests/PlayMode/AircraftPhysicsPlayModeTests.cs',
+              'Assets/SKYWARD/Tests/PlayMode/SKYWARDStartupSmokeTests.cs',
           ]
           for item in required:
               assert (root / item).is_file(), f'Missing {item}'
@@ -47,6 +49,14 @@ jobs:
           assert 'Vector3 sideLocal = Vector3.right' in aero, 'Sideslip force must oppose positive local-X slip'
           controller = (root / 'Assets/SKYWARD/Scripts/Aircraft/AircraftController.cs').read_text()
           assert 'Mathf.Clamp(value.x, -1f, 1f)' in controller and 'Mathf.Clamp(value.y, -1f, 1f)' in controller and 'Mathf.Clamp(value.z, -1f, 1f)' in controller
+          build = (root / 'Assets/SKYWARD/Editor/SkywardBuildAutomation.cs').read_text()
+          assert 'BuildWindows()' in build and 'BuildAndroid()' in build
+          assert 'BuildPipeline.BuildPlayer(options)' in build
+          assert 'BuildResult.Succeeded' in build
+          unity_workflow = (root / '.github/workflows/unity-build-and-test.yml').read_text()
+          assert 'game-ci/unity-test-runner@v4' in unity_workflow
+          assert 'game-ci/unity-builder@v4' in unity_workflow
+          assert 'SKYWARD-Windows-x64' in unity_workflow and 'SKYWARD-Android-ARM64-APK' in unity_workflow
           setup = (root / 'Assets/SKYWARD/Editor/SkywardSceneSetup.cs').read_text()
           assert 'EnsureUniversalRenderPipeline();' in setup
           assert 'GraphicsSettings.defaultRenderPipeline = pipeline;' in setup
