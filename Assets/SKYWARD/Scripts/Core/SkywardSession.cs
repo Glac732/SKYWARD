@@ -5,6 +5,7 @@ using Skyward.UI;
 using Skyward.Environment;
 using Skyward.Persistence;
 using Skyward.Audio;
+using Skyward.Environment;
 
 namespace Skyward.Core
 {
@@ -23,7 +24,8 @@ namespace Skyward.Core
             AudioListener.volume = profile.masterVolume;
             if (FindObjectOfType<AircraftController>() != null) return;
 
-            DemoAirportBuilder.Build();
+            int airportPreset = PlayerPrefs.GetInt("SKYWARD_ACTIVE_AIRPORT", 0);
+            DemoAirportBuilder.Build(airportPreset);
             GameObject aircraft = ProceduralTrainerBuilder.Build();
             aircraft.transform.position = new Vector3(0f, 0.58f, -620f);
             aircraft.transform.rotation = Quaternion.identity;
