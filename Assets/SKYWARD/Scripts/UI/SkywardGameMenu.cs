@@ -232,8 +232,8 @@ namespace Skyward.UI
             Transform wing = root.Find("Left wing");
             Transform tail = root.Find("Tailplane");
             Transform fuselage = root.Find("Fuselage");
-            if (wing != null) wing.localScale = new Vector3(preset == 1 ? 11.8f : preset == 2 ? 9.4f : 10.9f, 0.12f, preset == 2 ? 1.25f : 1.45f);
-            if (tail != null) tail.localScale = new Vector3(preset == 2 ? 3.1f : 3.6f, 0.1f, 0.8f);
+            if (wing != null) wing.localScale = new Vector3(preset == 1 ? 1.083f : preset == 2 ? 0.862f : 1f, 1f, preset == 2 ? 0.862f : 1f);
+            if (tail != null) tail.localScale = new Vector3(preset == 2 ? 0.861f : 1f, 1f, 1f);
             Color livery = preset == 1 ? new Color(0.88f, 0.9f, 0.92f) : preset == 2 ? new Color(0.92f, 0.22f, 0.12f) : new Color(0.82f, 0.84f, 0.83f);
             if (fuselage != null && fuselage.GetComponent<Renderer>() != null) fuselage.GetComponent<Renderer>().material.color = livery;
             if (wing != null && wing.GetComponent<Renderer>() != null) wing.GetComponent<Renderer>().material.color = livery;
