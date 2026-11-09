@@ -15,6 +15,7 @@ namespace Skyward.Environment
         private Transform cloudRoot;
         private ParticleSystem precipitation;
         private Light sun;
+        private AudioSource ambience;
         private int weather;
         private AircraftController aircraft;
 
@@ -84,6 +85,34 @@ namespace Skyward.Environment
             rendererRain.renderMode = ParticleSystemRenderMode.Stretch;
             rendererRain.lengthScale = 4f;
             rendererRain.material = MakeMaterial(new Color(0.65f, 0.78f, 0.9f, 0.5f));
+
+            GameObject audioObject = new GameObject("SKYWARD Wind and Weather Ambience");
+            audioObject.transform.SetParent(transform, false);
+            ambience = audioObject.AddComponent<AudioSource>();
+            ambience.clip = BuildWindLoop();
+            ambience.loop = true;
+            ambience.playOnAwake = false;
+            ambience.spatialBlend = 0f;
+            ambience.volume = 0f;
+            ambience.Play();
+            audioObject.AddComponent<AudioLowPassFilter>().cutoffFrequency = 1800f;
+        }
+
+        private AudioClip BuildWindLoop()
+        {
+            const int rate = 22050;
+            const int length = rate * 3;
+            float[] data = new float[length];
+            float slow = 0f;
+            for (int i = 0; i < length; i++)
+            {
+                slow = Mathf.Lerp(slow, Random.Range(-1f, 1f), 0.018f);
+                float fade = Mathf.Min(1f, Mathf.Min(i / 256f, (length - i - 1) / 256f));
+                data[i] = slow * fade * 0.55f;
+            }
+            AudioClip clip = AudioClip.Create("SKYWARD Wind Ambience", length, 1, rate, false);
+            clip.SetData(data, 0);
+            return clip;
         }
 
         public void ApplyWeather(int preset, AircraftController target)
@@ -106,6 +135,8 @@ namespace Skyward.Environment
             }
             if (cloudRoot != null)
                 cloudRoot.gameObject.SetActive(weather != 0);
+            if (ambience != null)
+                ambience.volume = weather == 4 ? 0.22f : weather == 1 || weather == 2 ? 0.13f : weather == 3 ? 0.08f : 0.035f;
         }
 
         private void Update()
