@@ -58,6 +58,7 @@ jobs:
           assert 'game-ci/unity-test-runner@v4' in unity_workflow
           assert 'game-ci/unity-builder@v4' in unity_workflow
           assert 'SKYWARD-Windows-x64' in unity_workflow and 'SKYWARD-Android-ARM64-APK' in unity_workflow
+          assert 'SKYWARD-Unity-Source-Project' in unity_workflow and 'git archive --format=zip' in unity_workflow
           setup = (root / 'Assets/SKYWARD/Editor/SkywardSceneSetup.cs').read_text()
           assert 'EnsureUniversalRenderPipeline();' in setup
           assert 'GraphicsSettings.defaultRenderPipeline = pipeline;' in setup
