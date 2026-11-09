@@ -29,7 +29,7 @@ The prompt explicitly requires that features are not represented as available un
 | HUD/cockpit | Screen overlay and seven textual world-space instrument readouts | Rudimentary; not production UI or a real cockpit |
 | Persistence | Small PlayerPrefs profile with backup key, version field and basic sanitisation | Partial; not full profile/progression system |
 | Tests | EditMode and PlayMode test source files | 19 cases authored; none run in this environment |
-| CI | GitHub Actions source-level metadata and source checks | Passed; not Unity compile/tests/build |
+| CI | GitHub Actions source checks plus a new Unity test/build workflow | Source checks passed; Unity workflow requires configured licence and has not yet been proven successful |
 | Packaging | Unity project source only | No executable release artifacts |
 
 ## 3. Corrections made during this audit
@@ -46,6 +46,9 @@ The following targeted changes were committed to `main`:
 8. **Material reuse:** cached procedural airport and trainer materials and used a URP Lit shader with a Standard fallback.
 9. **Wheel mesh alignment:** corrected the procedural wheel mesh orientation and its WheelCollider visual pose alignment.
 10. **Flight-time save accounting:** changed pause/quit persistence to add only newly elapsed session time, preventing repeated save events from counting the same flight seconds twice.
+11. **Build automation:** added explicit Unity Editor build entry points that generate the URP demo scene and build Windows x64 and Android ARM64 players, with build-result/error checks.
+12. **Unity CI pipeline:** added a GitHub Actions workflow to run EditMode/PlayMode tests, build both player targets, upload ZIP/APK artifacts and preserve test reports. It requires an activated Unity licence in the repository's `UNITY_LICENSE` Actions secret.
+13. **Startup smoke test:** added a PlayMode test for creation of the aircraft, three landing wheels, airport, main camera, HUD, cockpit instruments and configured render-pipeline asset.
 
 These are source edits. They have not yet been validated by importing/compiling/running the project inside Unity.
 
@@ -124,8 +127,8 @@ Current authored test source contains:
 
 - 11 aerodynamic EditMode tests.
 - 2 save-system EditMode tests.
-- 6 aircraft/ground/telemetry PlayMode tests.
-- **19 authored test cases in total.**
+- 6 aircraft/ground/telemetry PlayMode tests, plus 1 full-session startup smoke test.
+- **20 authored test cases in total.**
 
 **Execution status: NOT RUN.** Unity Editor and C# compiler tooling were unavailable in the development environment. Test names and assertions are not presented as passing evidence.
 
