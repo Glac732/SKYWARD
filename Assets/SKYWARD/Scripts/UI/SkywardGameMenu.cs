@@ -46,6 +46,7 @@ namespace Skyward.UI
             airportIndex = PlayerPrefs.GetInt("SKYWARD_ACTIVE_AIRPORT", 0);
             weatherIndex = PlayerPrefs.GetInt("SKYWARD_WEATHER", 0);
             BuildCanvas();
+            ApplyWeather();
             ShowHome();
         }
 
