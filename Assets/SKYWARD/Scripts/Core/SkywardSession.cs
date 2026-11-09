@@ -4,6 +4,7 @@ using Skyward.CameraSystem;
 using Skyward.UI;
 using Skyward.Environment;
 using Skyward.Persistence;
+using Skyward.Audio;
 
 namespace Skyward.Core
 {
@@ -45,6 +46,9 @@ namespace Skyward.Core
             AircraftController controller = aircraft.AddComponent<AircraftController>();
             controller.Initialize(config);
             activeAircraft = controller;
+
+            SkywardEngineAudio engineAudio = aircraft.AddComponent<SkywardEngineAudio>();
+            engineAudio.SetAircraft(controller);
 
             GameObject cameraObject = new GameObject("SKYWARD Flight Camera");
             cameraObject.tag = "MainCamera";
