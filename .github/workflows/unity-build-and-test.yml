@@ -8,6 +8,7 @@ on:
       - 'Packages/**'
       - 'ProjectSettings/**'
       - '.github/workflows/unity-build-and-test.yml'
+      - '.github/workflows/source-validation.yml'
   workflow_dispatch:
 
 permissions:
