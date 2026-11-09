@@ -38,6 +38,12 @@ namespace Skyward.Tests
             Assert.IsNotNull(aircraft.GetComponent<Rigidbody>(), "Trainer must have a Rigidbody.");
             Assert.AreEqual(3, aircraft.GetComponentsInChildren<WheelCollider>().Length,
                 "Trainer must have three landing-gear WheelColliders.");
+            Assert.IsNotNull(aircraft.transform.Find("Fuselage").GetComponent<MeshFilter>(),
+                "Trainer fuselage must use a custom 3D mesh.");
+            Assert.IsNotNull(aircraft.transform.Find("Left wing").GetComponent<MeshFilter>(),
+                "Trainer wing must use a custom 3D mesh.");
+            Assert.IsNotNull(aircraft.GetComponent<Skyward.Audio.SkywardEngineAudio>(),
+                "Aircraft must have its procedural engine audio component.");
             Assert.IsNotNull(hud, "Session startup must create the flight HUD.");
             Assert.IsNotNull(cockpit, "Session startup must create cockpit instruments.");
             Assert.IsNotNull(mainCamera, "Session startup must create a tagged main camera.");
