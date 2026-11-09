@@ -16,6 +16,8 @@ namespace Skyward.Core
         private float flightSecondsAlreadyRecorded;
 
         public void SetAircraftConfig(AircraftConfig value) => aircraftConfig = value;
+        public float UnsavedFlightSeconds => activeAircraft != null
+            ? Mathf.Max(0f, activeAircraft.FlightSeconds - flightSecondsAlreadyRecorded) : 0f;
 
         private void Start()
         {
