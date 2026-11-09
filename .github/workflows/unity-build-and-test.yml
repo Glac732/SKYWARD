@@ -20,6 +20,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  package-source:
+    name: Package downloadable Unity source project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Create clean source archive
+        run: |
+          git archive --format=zip --output SKYWARD-Unity-Source-Project.zip HEAD
+          unzip -t SKYWARD-Unity-Source-Project.zip
+          sha256sum SKYWARD-Unity-Source-Project.zip > SKYWARD-Unity-Source-Project.sha256
+      - name: Upload Unity source project
+        uses: actions/upload-artifact@v4
+        with:
+          name: SKYWARD-Unity-Source-Project
+          path: |
+            SKYWARD-Unity-Source-Project.zip
+            SKYWARD-Unity-Source-Project.sha256
+          if-no-files-found: error
+          retention-days: 30
+
   preflight:
     name: Check Unity licence and project prerequisites
     runs-on: ubuntu-latest
@@ -164,12 +186,13 @@ jobs:
 
   summary:
     name: Build and test summary
-    needs: [preflight, unity-tests, build-windows, build-android]
+    needs: [package-source, preflight, unity-tests, build-windows, build-android]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Write honest result summary
         env:
+          SOURCE: ${{ needs.package-source.result }}
           PREFLIGHT: ${{ needs.preflight.result }}
           TESTS: ${{ needs.unity-tests.result }}
           WINDOWS: ${{ needs.build-windows.result }}
@@ -180,6 +203,7 @@ jobs:
             echo ""
             echo "| Stage | Result |"
             echo "|---|---|"
+            echo "| Downloadable source archive | $SOURCE |"
             echo "| Unity licence preflight | $PREFLIGHT |"
             echo "| EditMode + PlayMode tests | $TESTS |"
             echo "| Windows x64 player | $WINDOWS |"
