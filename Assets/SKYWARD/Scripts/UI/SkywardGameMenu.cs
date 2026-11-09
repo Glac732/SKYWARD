@@ -33,12 +33,15 @@ namespace Skyward.UI
         private static readonly string[] LessonNames = { "01  PREFLIGHT & CONTROLS", "02  TAKE-OFF", "03  CLIMB & LEVEL FLIGHT", "04  APPROACH & LANDING" };
         private static readonly string[] WeatherNames = { "CLEAR • CALM", "BREEZY • 8 m/s", "CROSSWIND • 12 m/s", "DUSK • FOG", "RAIN • LOW VISIBILITY" };
 
-        public static void Create(AircraftController target)
+        public static SkywardGameMenu Create(AircraftController target)
         {
             GameObject root = new GameObject("SKYWARD Front End");
             SkywardGameMenu menu = root.AddComponent<SkywardGameMenu>();
             menu.aircraft = target;
+            return menu;
         }
+
+        public void ReturnToMenu() => ShowHome();
 
         private void Start()
         {
