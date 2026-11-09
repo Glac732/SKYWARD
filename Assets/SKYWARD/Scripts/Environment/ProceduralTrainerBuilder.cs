@@ -40,6 +40,11 @@ namespace Skyward.Environment
             CreatePart("Right wingtip", PrimitiveType.Sphere, new Vector3(5.35f, 0f, 0f), new Vector3(0.22f, 0.10f, 0.26f), new Color(0.08f, 0.22f, 0.78f), aircraft.transform);
             CreatePart("Left flap", PrimitiveType.Cube, new Vector3(-1.8f, -0.09f, -0.62f), new Vector3(3.0f, 0.045f, 0.34f), new Color(0.72f, 0.75f, 0.75f), aircraft.transform);
             CreatePart("Right flap", PrimitiveType.Cube, new Vector3(1.8f, -0.09f, -0.62f), new Vector3(3.0f, 0.045f, 0.34f), new Color(0.72f, 0.75f, 0.75f), aircraft.transform);
+            CreatePart("Left aileron", PrimitiveType.Cube, new Vector3(-4.05f, -0.07f, 0.18f), new Vector3(2.1f, 0.04f, 0.28f), new Color(0.76f, 0.78f, 0.78f), aircraft.transform);
+            CreatePart("Right aileron", PrimitiveType.Cube, new Vector3(4.05f, -0.07f, 0.18f), new Vector3(2.1f, 0.04f, 0.28f), new Color(0.76f, 0.78f, 0.78f), aircraft.transform);
+            CreatePart("Left elevator", PrimitiveType.Cube, new Vector3(-1.05f, 0.16f, -4.0f), new Vector3(1.5f, 0.045f, 0.26f), new Color(0.76f, 0.78f, 0.78f), aircraft.transform);
+            CreatePart("Right elevator", PrimitiveType.Cube, new Vector3(1.05f, 0.16f, -4.0f), new Vector3(1.5f, 0.045f, 0.26f), new Color(0.76f, 0.78f, 0.78f), aircraft.transform);
+            CreatePart("Rudder", PrimitiveType.Cube, new Vector3(0f, 0.82f, -3.85f), new Vector3(0.07f, 0.95f, 0.22f), new Color(0.76f, 0.78f, 0.78f), aircraft.transform);
             return aircraft;
         }
 
